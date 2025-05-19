@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة الطاقة الكونية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --primary-light: #a29bfe;
+            --secondary: #FF6584;
+            --success: #20C997;
+            --warning: #FFA500;
+            --danger: #FF5252;
+            --dark: #3B3B98;
+            --light: #f8f9ff;
+            --gray: #718096;
+            --light-gray: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f5f7fa;
+            padding: 0;
+            margin: 0;
+            color: #1A202C;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .header h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            right: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-box {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Tajawal', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+            outline: none;
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(108, 99, 255, 0.3);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin: 20px 0;
+        }
+        
+        .energy-level {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            background: var(--light);
+            padding: 12px;
+            border-radius: 10px;
+        }
+        
+        .energy-level-details {
+            flex: 1;
+        }
+        
+        .energy-level-name {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+        
+        .energy-level-reductions {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        .energy-level-bar {
+            height: 12px;
+            background: var(--light-gray);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 8px;
+            position: relative;
+        }
+        
+        .energy-level-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 6px;
+        }
+        
+        .energy-level-value {
+            width: 50px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .compatibility-meter {
+            width: 100%;
+            height: 20px;
+            background: var(--light-gray);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .compatibility-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: width 0.8s ease;
+        }
+        
+        .compatibility-value {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .result-card h3 {
+            margin: 0 0 10px;
+            color: var(--dark);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .result-card p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--light-gray);
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .summary-label {
+            font-weight: 600;
+            color: var(--gray);
+        }
+        
+        .summary-value {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .compatibility-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid;
+        }
+        
+        .compatibility-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .compatibility-title {
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .compatibility-percent {
+            background: rgba(0,0,0,0.1);
+            color: var(--dark);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+        
+        .compatibility-progress {
+            height: 8px;
+            background: var(--light-gray);
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .compatibility-progress-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .reduction-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .letter-calculation {
+            background: var(--light);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .letter-section {
+            margin-bottom: 15px;
+        }
+        
+        .letter-section-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        
+        .letter-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            padding: 3px 0;
+        }
+        
+        .letter-name {
+            color: var(--dark);
+        }
+        
+        .letter-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .letter-total {
+            font-weight: 700;
+            color: var(--dark);
+            text-align: center;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--light-gray);
+        }
+        
+        .letter-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        
+        .letter-compact {
+            background: rgba(108, 99, 255, 0.05);
+            padding: 5px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .letter-compact-char {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .letter-compact-value {
+            font-size: 12px;
+            color: var(--primary);
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .energy-level-reductions {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .letter-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-star"></i> حاسبة الطاقة الكونية</h1>
+        </div>
+        
+        <!-- Input Section -->
+        <div class="card">
+            <div class="input-group">
+                <div class="input-box">
+                    <label><i class="fas fa-user"></i> الاسم الأول</label>
+                    <input type="text" id="name1" placeholder="اسم الطالب">
+                </div>
+                
+                <div class="input-box">
+                    <label><i class="fas fa-user"></i> الاسم الثاني</label>
+                    <input type="text" id="name2" placeholder="اسم المطلوب">
+                </div>
+                
+                <div class="input-box">
+                    <label><i class="fas fa-female"></i> اسم الأم</label>
+                    <input type="text" id="motherName1" placeholder="اسم ام الطالب">
+                </div>
+            </div>
+            
+            <button id="calculateBtn">
+                <i class="fas fa-calculator"></i> حساب النتائج
+            </button>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="card hidden" id="energyResult">
+            <!-- Letter Calculation Section -->
+            <div class="result-card">
+                <h3><i class="fas fa-calculator"></i> حساب قيمة الحروف</h3>
+                <div id="letterCalculation"></div>
+            </div>
+            
+            <!-- Energy Levels -->
+            <h3 style="color:var(--dark); margin-bottom:15px;"><i class="fas fa-bolt"></i> مستويات الطاقة</h3>
+            <div id="energyLevels"></div>
+            
+            <!-- Compatibility -->
+            <h3 style="color:var(--dark); margin-bottom:15px;"><i class="fas fa-heart"></i> نتائج التوافق</h3>
+            <div class="compatibility-meter">
+                <div class="compatibility-fill" id="compatibilityFill"></div>
+                <div class="compatibility-value" id="compatibilityValue"></div>
+            </div>
+            
+            <div id="compatibilityResults"></div>
+            
+            <!-- Spiritual Compatibility -->
+            <div id="spiritualCompatibility"></div>
+            
+            <!-- Final Compatibility -->
+            <div id="finalCompatibility"></div>
+        </div>
+    </div>
+
+    <script>
+        // Constants
+        const letterValues = {
+            'ا':1,'أ':6,'إ':6,'آ':6,'ء':6,'ب':2,'ج':3,'د':4,'ه':5,'ة':400,
+            'و':6,'ؤ':6,'ز':7,'ح':8,'ط':9,'ي':10,'ى':10,'ئ':10,'ك':20,'ل':30,
+            'م':40,'ن':50,'س':60,'ع':70,'ف':80,'ص':90,'ق':100,'ر':200,'ش':300,
+            'ت':400,'ث':500,'خ':600,'ذ':700,'ض':800,'ظ':900,'غ':1000,' ':0
+        };
+
+        const energyTable = [
+            [98,7.8,6.8,7.4,88,5.8,94,6.6,6.2,90,98,5.5],
+            [5.75,3.75,2.75,3.35,47.5,17.5,5.35,2.55,2.15,4.95,57.5,10],
+            [94,7.4,6.4,7,84,5.4,90,4.1,5.8,86,94,4.65],
+            [7.3,53,4.3,49,63,3.3,6.9,4.1,3.7,6.5,73,2.5],
+            [6.6,4.6,36,4.2,56,2.6,6.2,34,30,5.8,66,1.8],
+            [6.2,4.2,32,3.8,52,2.2,5.8,30,26,5.4,62,1.4],
+            [5.5,3.5,2.5,3.1,45,15,5.1,2.3,1.9,4.7,55,7.5]
+        ];
+
+        const daysOfWeek = [
+            {name:"الأحد",value:44}, {name:"الإثنين",value:642}, 
+            {name:"الثلاثاء",value:1069}, {name:"الأربعاء",value:311},
+            {name:"الخميس",value:741}, {name:"الجمعة",value:544},
+            {name:"السبت",value:493}
+        ];
+
+        // Helper Functions
+        function calculateNameValue(name) {
+            let total = 0;
+            let letters = [];
+            for (let char of name) {
+                const value = letterValues[char] || 0;
+                total += value;
+                if (value > 0) { // تجاهل المسافات
+                    letters.push({char, value});
+                }
+            }
+            return {total, letters};
+        }
+
+        function getRowTitle(num) {
+            const titles = ["الجن","الهواء","السحر","العين","الدم","الصفراء","الكرب"];
+            return titles[num-1] || "غير معروف";
+        }
+
+        function getColumnTitle(num) {
+            const titles = [
+                "الجن","عين انثى","عضال","عين رجل","قرين","ريح",
+                "ارضي","الدم","الصفراء","سحر ادمي","قرينة","الغم"
+            ];
+            return titles[num-1] || "غير معروف";
+        }
+
+        function renderLettersCompact(letters) {
+            let html = '<div class="letter-grid">';
+            letters.forEach(letter => {
+                html += `
+                    <div class="letter-compact">
+                        <div class="letter-compact-char">${letter.char}</div>
+                        <div class="letter-compact-value">${letter.value}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            return html;
+        }
+
+        // Global variables
+        let daysData = [];
+        let energyChart = null;
+        let compatibilityPercentage = 0;
+
+        // Main Functions
+        function calculateAll() {
+            const name1 = document.getElementById('name1').value.trim();
+            const name2 = document.getElementById('name2').value.trim();
+            const motherName1 = document.getElementById('motherName1').value.trim();
+            
+            if (!name1 || !name2 || !motherName1) {
+                alert('الرجاء إدخال جميع الحقول المطلوبة');
+                return;
+            }
+
+            // Calculate values
+            const name1Result = calculateNameValue(name1);
+            const motherResult = calculateNameValue(motherName1);
+            const name2Result = calculateNameValue(name2);
+            
+            // Show results
+            showLetterCalculation(name1Result, motherResult, name2Result);
+            calculateEnergyLevels(name1Result.total, motherResult.total);
+            showCompatibility(name1, name2);
+            
+            document.getElementById('energyResult').classList.remove('hidden');
+            document.getElementById('energyResult').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showLetterCalculation(name1Result, motherResult, name2Result) {
+            const name1Total = name1Result.total;
+            const motherTotal = motherResult.total;
+            const name2Total = name2Result.total;
+            const combinedTotal = name1Total + motherTotal;
+            
+            let html = `
+                <div class="letter-section">
+                    <div class="letter-section-title">اسم الطالب (${document.getElementById('name1').value})</div>
+                    <div class="letter-calculation">
+                        ${renderLettersCompact(name1Result.letters)}
+                        <div class="letter-total">المجموع: ${name1Total}</div>
+                    </div>
+                </div>
+                
+                <div class="letter-section">
+                    <div class="letter-section-title">اسم الأم (${document.getElementById('motherName1').value})</div>
+                    <div class="letter-calculation">
+                        ${renderLettersCompact(motherResult.letters)}
+                        <div class="letter-total">المجموع: ${motherTotal}</div>
+                    </div>
+                </div>
+                
+                <div class="letter-section">
+                    <div class="letter-section-title">اسم المطلوب (${document.getElementById('name2').value})</div>
+                    <div class="letter-calculation">
+                        ${renderLettersCompact(name2Result.letters)}
+                        <div class="letter-total">المجموع: ${name2Total}</div>
+                    </div>
+                </div>
+                
+                <div class="letter-section">
+                    <div class="letter-section-title">القيمة المشتركة (الطالب + الأم)</div>
+                    <div class="letter-calculation" style="text-align:center; font-weight:700;">
+                        ${name1Total} + ${motherTotal} = ${combinedTotal}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('letterCalculation').innerHTML = html;
+        }
+
+        function calculateEnergyLevels(nameTotal, motherTotal) {
+            daysData = daysOfWeek.map(day => {
+                const combinedTotal = nameTotal + motherTotal + day.value;
+                const reduction7 = (combinedTotal % 7) || 7;
+                const reduction12 = (combinedTotal % 12) || 12;
+                const ratioFromTable = energyTable[reduction7-1][reduction12-1];
+                return {...day, combinedTotal, reduction7, reduction12, ratioFromTable};
+            });
+            
+            // Show energy levels
+            showEnergyLevels();
+        }
+
+        function showEnergyLevels() {
+            let levelsHTML = '';
+            
+            daysData.forEach(day => {
+                const percentage = (day.ratioFromTable / 100) * 100; // Normalize to 100% scale
+                
+                levelsHTML += `
+                <div class="energy-level">
+                    <div class="energy-level-details">
+                        <div class="energy-level-name">${day.name}</div>
+                        <div class="energy-level-reductions">
+                            <span><span class="reduction-badge"> 7: ${day.reduction7}</span> ${getRowTitle(day.reduction7)}</span>
+                            <span><span class="reduction-badge"> 12: ${day.reduction12}</span> ${getColumnTitle(day.reduction12)}</span>
+                        </div>
+                        <div class="energy-level-bar">
+                            <div class="energy-level-fill" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                    <div class="energy-level-value">${day.ratioFromTable}%</div>
+                </div>
+                `;
+            });
+            
+            document.getElementById('energyLevels').innerHTML = levelsHTML;
+        }
+
+        function showCompatibility(name1, name2) {
+            const gematria1 = calculateNameValue(name1).total;
+            const gematria2 = calculateNameValue(name2).total;
+            const sum = gematria1 + gematria2 + 7;
+            const compatibility9 = sum % 9 || 9;
+            const compatibility8 = sum % 8 || 8;
+
+            // Compatibility percentages
+            const percentage9 = [20,37.2,18.6,24.8,43.4,0.4,31,49.5,0.1][compatibility9-1] || 0;
+            const percentage8 = [33,27.5,0.3,22,12.4,44,38.5,49.6][compatibility8-1] || 0;
+            compatibilityPercentage = (percentage9 + percentage8).toFixed(1);
+
+            // Update compatibility meter
+            document.getElementById('compatibilityFill').style.width = compatibilityPercentage + '%';
+            document.getElementById('compatibilityValue').textContent = compatibilityPercentage + '%';
+
+            // Descriptions
+            const descriptions9 = [
+                "فهو وطيء لا خير فيه - قد يشير إلى علاقة غير مستقرة أو غير سعيدة",
+                "فهو طيب - علاقة جيدة ومستقرة مع مشاعر إيجابية",
+                "أوله وطيء آخره رديء يتبعها فرج - بداية صعبة لكن النهاية قد تكون أفضل",
+                "فيه قوة بمن وتوفيقه وطيء - علاقة متوازنة مع بعض التحديات",
+                "بيت البنين - قد يشير إلى علاقة مثمرة مع إمكانية الإنجاب",
+                "أوله طيب وآخره هم وغم - بداية جيدة لكن النهاية قد تكون صعبة",
+                "بيت الفراش ووقت لك وآخر عليك - علاقة عاطفية مع تقلبات",
+                "بيت الاتكاء - جيد ونيل مطلب - علاقة مريحة وتحقيق أهداف",
+                "فرحيل ونزاع وفرار - قد يشير إلى خلافات أو انفصال"
+            ];
+            
+            const descriptions8 = [
+                "فيه خير ورزق - علاقة إيجابية مع توفيق مادي",
+                "يتزوجها ويلد منها - علاقة زواج ناجحة مع إنجاب",
+                "لا يتزوجها ولا خير فيه - علاقة غير موصى بها",
+                "يتزوجها بطلب منها - زواج بمبادرة من الطرف الآخر",
+                "اول زواجهما ضيق يتبعها وسع - بداية صعبة لكن النهاية تكون افضل",
+                "يتزوجها ويلد منها وتحبه الناس والسلاطين - زواج ناجح ومقبول اجتماعياً",
+                "يتزوجها ويلد منها - زواج ناجح مع إنجاب",
+                "يتزوجها وتحبه ويحبها وتلد منه - زواج ناجح ومتوافق عاطفياً"
+            ];
+
+            // Render spiritual compatibility
+            document.getElementById('spiritualCompatibility').innerHTML = `
+                <div class="compatibility-card" style="border-left-color: #6C63FF;">
+                    <div class="compatibility-header">
+                        <div class="compatibility-title">
+                            <i class="fas fa-pray"></i> التوافق الروحي (9: ${compatibility9})
+                        </div>
+                        <div class="compatibility-percent">${percentage9}%</div>
+                    </div>
+                    <p style="margin:10px 0; font-size:14px; color:var(--gray);">
+                        ${descriptions9[compatibility9-1]}
+                    </p>
+                    <div class="compatibility-progress">
+                        <div class="compatibility-progress-fill" style="width: ${percentage9}%; background: #6C63FF;"></div>
+                    </div>
+                </div>
+            `;
+            
+            // Render final compatibility
+            document.getElementById('finalCompatibility').innerHTML = `
+                <div class="compatibility-card" style="border-left-color: #20C997;">
+                    <div class="compatibility-header">
+                        <div class="compatibility-title">
+                            <i class="fas fa-heart"></i> التوافق النهائي (8: ${compatibility8})
+                        </div>
+                        <div class="compatibility-percent">${percentage8}%</div>
+                    </div>
+                    <p style="margin:10px 0; font-size:14px; color:var(--gray);">
+                        ${descriptions8[compatibility8-1]}
+                    </p>
+                    <div class="compatibility-progress">
+                        <div class="compatibility-progress-fill" style="width: ${percentage8}%; background: #20C997;"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Event Listener
+        document.getElementById('calculateBtn').addEventListener('click', calculateAll);
+    </script>
+</body>
+</html>
