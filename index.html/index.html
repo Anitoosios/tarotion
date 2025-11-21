@@ -421,7 +421,7 @@
         }
 
         .compatibility-result {
-            background: linear-gradient(135deg, #fef3c7, #921db6);
+            background: linear-gradient(135deg, #fef3c7, #f59e0b);
             padding: 25px;
             border-radius: 12px;
             border: 3px solid #f59e0b;
@@ -846,6 +846,16 @@
             border: 2px dashed var(--border-color);
         }
 
+        .comparison-badge {
+            display: inline-block;
+            background: var(--info-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+        }
+
         @media (max-width: 768px) {
             .cards-container {
                 grid-template-columns: 1fr;
@@ -1243,6 +1253,7 @@
                     "water": { good: ["earth", "water"], bad: ["fire", "air"] }
                 };
 
+                // النسب الأصلية محفوظة كما هي
                 this.desc9 = [
                     {}, 
                     {text: "فهو وطيء لا خير فيه", percent: 20},
@@ -1266,6 +1277,16 @@
                     {text: "يتزوجها ويلد منها وتحبه الناس والسلاطين", percent: 44},
                     {text: "يتزوجها ويلد منها", percent: 38.5},
                     {text: "يتزوجها وتحبه ويحبها وتلد منه", percent: 49.6}
+                ];
+
+                // إضافة نظام 5 الجديد
+                this.desc5 = [
+                    {},
+                    {text: "يجتمعان - توافق جيد", percent: 10},
+                    {text: "لا يجتمعان - عدم توافق", percent: 1.5},
+                    {text: "يجتمعان - توافق متوسط", percent: 10}, 
+                    {text: "لا يجتمعان - عدم توافق", percent: 1.5},
+                    {text: "يجتمعان - توافق ممتاز", percent: 10}
                 ];
 
                 this.energyTable = [
@@ -1552,9 +1573,38 @@
                 };
             }
 
+            calculateMod5Compatibility(studentLarge, studentSmall, parent1Large, parent1Small, 
+                                     parent2Large, parent2Small, targetLarge, targetSmall, 
+                                     targetParent1Large, targetParent1Small, targetParent2Large, targetParent2Small) {
+                
+                const largeTotal = studentLarge + parent1Large + parent2Large + 
+                                 targetLarge + targetParent1Large + targetParent2Large;
+                const smallTotal = studentSmall + parent1Small + parent2Small + 
+                                 targetSmall + targetParent1Small + targetParent2Small;
+                
+                const largeMod5 = (largeTotal % 5) || 5;
+                const smallMod5 = (smallTotal % 5) || 5;
+                
+                return {
+                    large: {
+                        totalValue: largeTotal,
+                        mod5Value: largeMod5,
+                        meets: (largeMod5 === 1 || largeMod5 === 3 || largeMod5 === 5),
+                        ...this.desc5[largeMod5]
+                    },
+                    small: {
+                        totalValue: smallTotal,
+                        mod5Value: smallMod5,
+                        meets: (smallMod5 === 1 || smallMod5 === 3 || smallMod5 === 5),
+                        ...this.desc5[smallMod5]
+                    }
+                };
+            }
+
             calculateCompatibility(studentLarge, studentSmall, studentParent1Large, studentParent1Small, 
                                   studentParent2Large, studentParent2Small, targetLarge, targetSmall, 
                                   targetParent1Large, targetParent1Small, targetParent2Large, targetParent2Small) {
+                
                 const largeTotal = studentLarge + studentParent1Large + studentParent2Large + 
                                  targetLarge + targetParent1Large + targetParent2Large + 7;
                 const smallTotal = studentSmall + studentParent1Small + studentParent2Small + 
@@ -1565,20 +1615,31 @@
                 const smallMod9 = (smallTotal % 9) || 9;
                 const smallMod8 = (smallTotal % 8) || 8;
                 
+                // إضافة نظام 5
+                const mod5Result = this.calculateMod5Compatibility(
+                    studentLarge, studentSmall, studentParent1Large, studentParent1Small, 
+                    studentParent2Large, studentParent2Small, targetLarge, targetSmall, 
+                    targetParent1Large, targetParent1Small, targetParent2Large, targetParent2Small
+                );
+                
                 return {
                     large: {
                         mod9: { ...this.desc9[largeMod9], value: largeMod9 },
                         mod8: { ...this.desc8[largeMod8], value: largeMod8 },
+                        mod5: mod5Result.large,
                         totalValue: largeTotal,
                         mod9Value: largeMod9,
-                        mod8Value: largeMod8
+                        mod8Value: largeMod8,
+                        mod5Value: mod5Result.large.mod5Value
                     },
                     small: {
                         mod9: { ...this.desc9[smallMod9], value: smallMod9 },
                         mod8: { ...this.desc8[smallMod8], value: smallMod8 },
+                        mod5: mod5Result.small,
                         totalValue: smallTotal,
                         mod9Value: smallMod9,
-                        mod8Value: smallMod8
+                        mod8Value: smallMod8,
+                        mod5Value: mod5Result.small.mod5Value
                     }
                 };
             }
@@ -1636,54 +1697,8 @@
             }
         }
 
-        class Mod5System {
-            calculateMod5Compatibility(studentLarge, studentSmall, parent1Large, parent1Small, 
-                                     parent2Large, parent2Small, targetLarge, targetSmall, 
-                                     targetParent1Large, targetParent1Small, targetParent2Large, targetParent2Small) {
-                const largeTotal = studentLarge + parent1Large + parent2Large + 
-                                 targetLarge + targetParent1Large + targetParent2Large;
-                const smallTotal = studentSmall + parent1Small + parent2Small + 
-                                 targetSmall + targetParent1Small + targetParent2Small;
-                
-                const largeMod5 = (largeTotal % 5) || 5;
-                const smallMod5 = (smallTotal % 5) || 5;
-                
-                const largeMeets = (largeMod5 === 2 || largeMod5 === 4) ? "لا يجتمعان" : "يجتمعان";
-                const smallMeets = (smallMod5 === 2 || smallMod5 === 4) ? "لا يجتمعان" : "يجتمعان";
-                
-                return {
-                    large: {
-                        totalValue: largeTotal,
-                        mod5Value: largeMod5,
-                        result: largeMeets,
-                        meets: largeMeets === "يجتمعان",
-                        description: this.getMod5Description(largeMod5)
-                    },
-                    small: {
-                        totalValue: smallTotal,
-                        mod5Value: smallMod5,
-                        result: smallMeets,
-                        meets: smallMeets === "يجتمعان",
-                        description: this.getMod5Description(smallMod5)
-                    }
-                };
-            }
-
-            getMod5Description(mod5Value) {
-                const descriptions = {
-                    1: "يجتمعان - توافق جيد",
-                    2: "لا يجتمعان - عدم توافق",
-                    3: "يجتمعان - توافق متوسط", 
-                    4: "لا يجتمعان - عدم توافق",
-                    5: "يجتمعان - توافق ممتاز"
-                };
-                return descriptions[mod5Value] || "غير معروف";
-            }
-        }
-
         // ========== التطبيق الرئيسي ==========
         const dualTaro = new DualTaroSystem();
-        const mod5System = new Mod5System();
 
         // الدوال الرئيسية
         function calculateAllResults() {
@@ -1877,7 +1892,7 @@
                 '𐩵-𐩨-𐩵': { reference: 'الأنفال 19', text: 'إِن تَسْتَفْتِحُوا فَقَدْ جَاءَكُمُ الْفَتْحُ' },
                 '𐩵-𐩴-𐩱': { reference: 'الحديد 20', text: 'اعْلَمُوا أَنَّمَا الْحَيَاةُ الدُّنْيَا لَعِبٌ وَلَهْوٌ وَزِينَةٌ وَتَفَاخُرٌ بَيْنَكُمْ' },
                 '𐩵-𐩴-𐩨': { reference: 'المنافقون 9', text: 'يَا أَيُّهَا الَّذِينَ آمَنُوا لَا تُلْهِكُمْ أَمْوَالُكُمْ وَلَا أَوْلَادُكُمْ عَن ذِكْرِ اللَّهِ' },
-                '𐩵-𐩴-𐩴': { reference: 'الحديد 25', text: 'لَقَدْ أَرْسَلْنَا رُسُلَنَا بِالْبَيِّنَاتِ وَأَنزَلْنَا مَعَهُمُ الْكِتَابَ وَالْمِيزَانَ' },
+                '𐩵-𐩴-𐩴': { reference: 'الحديد 25', text: 'لَقَدْ أَرْسَلْنَا رُسُلَنَا بِالْبَيِّنَاتِ وَأَنزَلْنَا مَعَهُمُ الْكِتَابَ وَالْمِيزانَ' },
                 '𐩵-𐩴-𐩵': { reference: 'يونس 57', text: 'يَا أَيُّهَا النَّاسُ قَدْ جَاءَتْكُم مَّوْعِظَةٌ مِّن رَّبِّكُمْ وَشِفَاءٌ لِّمَا فِي الصُّدُورِ' },
                 '𐩵-𐩵-𐩱': { reference: 'لقمان 7 - البقرة 286', text: 'وَإِذَا تُتْلَىٰ عَلَيْهِ آيَاتُنَا وَلَّىٰ مُسْتَكْبِرًا كَأَن لَّمْ يَسْمَعْهَا' },
                 '𐩵-𐩵-𐩨': { reference: 'آل عمران 160 - الفتح 5', text: 'إِن يَنصُرْكُمُ اللَّهُ فَلَا غَالِبَ لَكُمْ' },
@@ -2042,6 +2057,57 @@
             container.innerHTML = content;
         }
 
+        function createCompatibilityCard(title, result, totalPercent) {
+            // حساب النسب الثلاثية
+            const normalized9 = (result.mod9.percent * 0.66).toFixed(1);
+            const normalized8 = (result.mod8.percent * 0.66).toFixed(1);
+            const system5Percent = result.mod5.percent;
+            
+            const threeDTotal = (parseFloat(normalized9) + parseFloat(normalized8) + system5Percent).toFixed(1);
+
+            return `
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="result-title">${title}</div>
+                        <div class="result-percentage">
+                            <div>${totalPercent.toFixed(1)}% <span class="comparison-badge">ثنائي</span></div>
+                            <div>${threeDTotal}% <span class="comparison-badge">ثلاثي</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="systems-grid">
+                        <div class="system-item">
+                            <div class="system-value">${result.mod9Value}</div>
+                            <div class="system-label">نظام 9</div>
+                            <div class="system-percentage">${result.mod9.percent}% → ${normalized9}%</div>
+                        </div>
+                        
+                        <div class="system-item">
+                            <div class="system-value">${result.mod8Value}</div>
+                            <div class="system-label">نظام 8</div>
+                            <div class="system-percentage">${result.mod8.percent}% → ${normalized8}%</div>
+                        </div>
+                        
+                        <div class="system-item">
+                            <div class="system-value">${result.mod5Value}</div>
+                            <div class="system-label">نظام 5</div>
+                            <div class="system-percentage">${system5Percent}%</div>
+                            <div class="system-status ${result.mod5.meets ? 'status-success' : 'status-danger'}">
+                                ${result.mod5.meets ? 'يجتمعان' : 'لا يجتمعان'}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-description">
+                        <strong>نظام 9:</strong> ${result.mod9.text}<br>
+                        <strong>نظام 8:</strong> ${result.mod8.text}<br>
+                        <strong>نظام 5:</strong> ${result.mod5.text}<br>
+                        <strong>المجموع الثلاثي:</strong> ${threeDTotal}%
+                    </div>
+                </div>
+            `;
+        }
+
         function showCompatibilityResults(student, mother, father, target, targetMother, targetFather) {
             const studentDual = dualTaro.calculateNameDual(student);
             const motherDual = dualTaro.calculateNameDual(mother);
@@ -2059,19 +2125,11 @@
                     result: dualTaro.calculateCompatibility(
                         studentDual.large.sum, studentDual.small.sum, 0, 0, 0, 0,
                         targetDual.large.sum, targetDual.small.sum, 0, 0, 0, 0
-                    ),
-                    mod5: mod5System.calculateMod5Compatibility(
-                        studentDual.large.sum, studentDual.small.sum, 0, 0, 0, 0,
-                        targetDual.large.sum, targetDual.small.sum, 0, 0, 0, 0
                     )
                 },
                 {
                     title: "بـــاب الـام",
                     result: dualTaro.calculateCompatibility(
-                        studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, 0, 0,
-                        targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, 0, 0
-                    ),
-                    mod5: mod5System.calculateMod5Compatibility(
                         studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, 0, 0,
                         targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, 0, 0
                     )
@@ -2081,19 +2139,11 @@
                     result: dualTaro.calculateCompatibility(
                         studentDual.large.sum, studentDual.small.sum, 0, 0, fatherDual.large.sum, fatherDual.small.sum,
                         targetDual.large.sum, targetDual.small.sum, 0, 0, targetFatherDual.large.sum, targetFatherDual.small.sum
-                    ),
-                    mod5: mod5System.calculateMod5Compatibility(
-                        studentDual.large.sum, studentDual.small.sum, 0, 0, fatherDual.large.sum, fatherDual.small.sum,
-                        targetDual.large.sum, targetDual.small.sum, 0, 0, targetFatherDual.large.sum, targetFatherDual.small.sum
                     )
                 },
                 {
                     title: "الـــوالدين",
                     result: dualTaro.calculateCompatibility(
-                        studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, fatherDual.large.sum, fatherDual.small.sum,
-                        targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, targetFatherDual.large.sum, targetFatherDual.small.sum
-                    ),
-                    mod5: mod5System.calculateMod5Compatibility(
                         studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, fatherDual.large.sum, fatherDual.small.sum,
                         targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, targetFatherDual.large.sum, targetFatherDual.small.sum
                     )
@@ -2102,12 +2152,12 @@
 
             largeContainer.innerHTML = combinations.map(combo => {
                 const totalPercent = (combo.result.large.mod9.percent + combo.result.large.mod8.percent);
-                return createCompatibilityCard(combo.title, combo.result.large, combo.mod5.large, totalPercent);
+                return createCompatibilityCard(combo.title, combo.result.large, totalPercent);
             }).join('');
 
             smallContainer.innerHTML = combinations.map(combo => {
                 const totalPercent = (combo.result.small.mod9.percent + combo.result.small.mod8.percent);
-                return createCompatibilityCard(combo.title, combo.result.small, combo.mod5.small, totalPercent);
+                return createCompatibilityCard(combo.title, combo.result.small, totalPercent);
             }).join('');
         }
 
@@ -2125,41 +2175,6 @@
             
             largeContainer.innerHTML = message;
             smallContainer.innerHTML = message;
-        }
-
-        function createCompatibilityCard(title, result, mod5Result, totalPercent) {
-            return `
-                <div class="result-card">
-                    <div class="result-header">
-                        <div class="result-title">${title}</div>
-                        <div class="result-percentage">${totalPercent.toFixed(1)}%</div>
-                    </div>
-                    <div class="systems-grid">
-                        <div class="system-item">
-                            <div class="system-value">${result.mod9Value}</div>
-                            <div class="system-label">نظام 9</div>
-                            <div class="system-percentage">${result.mod9.percent}%</div>
-                        </div>
-                        <div class="system-item">
-                            <div class="system-value">${result.mod8Value}</div>
-                            <div class="system-label">نظام 8</div>
-                            <div class="system-percentage">${result.mod8.percent}%</div>
-                        </div>
-                        <div class="system-item">
-                            <div class="system-value">${mod5Result.mod5Value}</div>
-                            <div class="system-label">نظام 5</div>
-                            <div class="system-status ${mod5Result.meets ? 'status-success' : 'status-danger'}">
-                                ${mod5Result.result}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="result-description">
-                        <strong>نظام 9:</strong> ${result.mod9.text}<br>
-                        <strong>نظام 8:</strong> ${result.mod8.text}<br>
-                        <strong>نظام 5:</strong> ${mod5Result.description}
-                    </div>
-                </div>
-            `;
         }
 
         function calculateAndDisplayAllEnergyResults(student, mother, father) {
