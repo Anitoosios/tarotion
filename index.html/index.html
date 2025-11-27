@@ -4,2366 +4,291 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام أحمد ناجي - التحليل الشامل</title>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #3b82f6;
-            --secondary-color: #1e40af;
-            --background-color: #f8fafc;
-            --text-color: #1e293b;
-            --card-bg: #ffffff;
-            --border-color: #e2e8f0;
-            --success-color: #059669;
-            --danger-color: #dc2626;
-            --warning-color: #d97706;
-            --info-color: #0ea5e9;
-        }
-
-        .dark-mode {
-            --primary-color: #60a5fa;
-            --secondary-color: #3b82f6;
-            --background-color: #0f172a;
-            --text-color: #f1f5f9;
-            --card-bg: #1e293b;
-            --border-color: #334155;
-            --success-color: #34d399;
-            --danger-color: #f87171;
-            --warning-color: #fbbf24;
-            --info-color: #38bdf8;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        body {
-            font-family: 'IBM Plex Sans Arabic', sans-serif;
-            background: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 25px;
-            background: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border: 2px solid var(--border-color);
-            position: relative;
-        }
-
-        .header h1 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            font-size: 1.8rem;
-            line-height: 1.4;
-        }
-
-        .header p {
-            color: var(--text-color);
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-
-        .theme-toggle {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.9rem;
-        }
-
-        .cards-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .person-card {
-            background: linear-gradient(135deg, var(--card-bg) 0%, #f8fafc 100%);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border: 2px solid var(--border-color);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .person-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-        }
-
-        .person-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
-        }
-
-        .card-header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .card-icon {
-            width: 35px;
-            height: 35px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.1rem;
-        }
-
-        .input-group {
-            margin-bottom: 18px;
-        }
-
-        .input-label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-        }
-
-        .input-label i {
-            color: var(--primary-color);
-            width: 20px;
-        }
-
-        .required::after {
-            content: " *";
-            color: var(--danger-color);
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 1rem;
-            font-family: inherit;
-            background: var(--background-color);
-            color: var(--text-color);
-            transition: all 0.3s ease;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .input-field::placeholder {
-            color: #94a3b8;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-
-        .btn {
-            padding: 14px 28px;
-            border: none;
-            border-radius: 10px;
-            font-family: inherit;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            min-width: 140px;
-            justify-content: center;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--border-color);
-            color: var(--text-color);
-        }
-
-        .btn-outline:hover {
-            background: var(--border-color);
-            transform: translateY(-2px);
-        }
-
-        .results-section {
-            margin-top: 20px;
-        }
-
-        .section-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .section-header:hover {
-            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
-        }
-
-        .section-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .section-icon {
-            font-size: 1.3rem;
-        }
-
-        .section-content {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border: 2px solid var(--border-color);
-            margin-bottom: 25px;
-        }
-
-        /* نظام القرعة */
-        .system4-results {
-            text-align: center;
-        }
-
-        .stones-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .stone-card {
-            background: var(--background-color);
-            padding: 25px;
-            border-radius: 12px;
-            border: 2px solid var(--border-color);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .stone-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-        }
-
-        .stone-name {
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: var(--text-color);
-            font-size: 1rem;
-        }
-
-        .stone-char {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            margin: 10px 0;
-        }
-
-        .stone-type {
-            font-size: 0.9rem;
-            color: var(--text-color);
-            opacity: 0.8;
-        }
-
-        .final-sequence {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin: 30px 0;
-            padding: 25px;
-            background: var(--background-color);
-            border-radius: 12px;
-            border: 3px solid var(--primary-color);
-            direction: ltr;
-            color: var(--text-color);
-            text-align: center;
-        }
-
-        .quran-result {
-            margin-top: 30px;
-            padding: 25px;
-            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-            border-radius: 12px;
-            border: 3px solid #22c55e;
-            text-align: center;
-        }
-
-        .quran-reference {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #166534;
-            margin-bottom: 10px;
-        }
-
-        .quran-text {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #15803d;
-            line-height: 1.8;
-            font-family: 'IBM Plex Sans Arabic', sans-serif;
-        }
-
-        /* الإبراج */
-        .zodiac-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .zodiac-card {
-            background: var(--background-color);
-            border-radius: 12px;
-            padding: 25px;
-            border: 2px solid var(--border-color);
-            text-align: center;
-        }
-
-        .zodiac-person {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .zodiac-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .zodiac-detail {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .zodiac-label {
-            font-weight: 600;
-            color: var(--text-color);
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-
-        .zodiac-value {
-            font-weight: 700;
-            color: var(--primary-color);
-            font-size: 1rem;
-        }
-
-        .compatibility-result {
-            background: linear-gradient(135deg, #fef3c7, #f59e0b);
-            padding: 25px;
-            border-radius: 12px;
-            border: 3px solid #f59e0b;
-            text-align: center;
-        }
-
-        .compatibility-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #92400e;
-            margin-bottom: 15px;
-        }
-
-        .compatibility-text {
-            font-size: 1.1rem;
-            color: #b45309;
-            line-height: 1.6;
-        }
-
-        /* الحلبة */
-        .dominance-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .dominance-player {
-            text-align: center;
-            padding: 25px;
-            background: var(--background-color);
-            border-radius: 12px;
-            border: 3px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .dominance-player.winner {
-            border-color: var(--success-color);
-            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-        }
-
-        .dominance-player.loser {
-            border-color: var(--danger-color);
-            background: linear-gradient(135deg, #fecaca, #fca5a5);
-        }
-
-        .player-role {
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: var(--text-color);
-            opacity: 0.8;
-            font-size: 1rem;
-        }
-
-        .player-name {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-
-        .player-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--text-color);
-            margin-bottom: 15px;
-        }
-
-        .player-status {
-            font-size: 1rem;
-            font-weight: 600;
-            padding: 8px 20px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-
-        .status-dominant {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .status-dominated {
-            background: var(--danger-color);
-            color: white;
-        }
-
-        .dominance-final {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            color: white;
-        }
-
-        .final-result {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .final-description {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        /* شجرة التوافق */
-        .compatibility-tabs {
-            display: flex;
-            background: var(--background-color);
-            padding: 10px;
-            gap: 8px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            flex-wrap: wrap;
-        }
-
-        .compatibility-tab {
-            flex: 1;
-            padding: 12px 16px;
-            border: none;
-            background: var(--border-color);
-            color: var(--text-color);
-            cursor: pointer;
-            border-radius: 8px;
-            font-family: inherit;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            min-width: 120px;
-        }
-
-        .compatibility-tab.active {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .compatibility-content {
-            display: none;
-        }
-
-        .compatibility-content.active {
-            display: block;
-        }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-        }
-
-        .result-card {
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-        }
-
-        .result-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-        }
-
-        .result-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-            padding-bottom: 18px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .result-title {
-            font-weight: 700;
-            color: var(--text-color);
-            font-size: 1.2rem;
-        }
-
-        .result-percentage {
-            background: var(--primary-color);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .systems-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-
-        .system-item {
-            text-align: center;
-            padding: 15px;
-            background: var(--background-color);
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .system-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .system-value {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 8px;
-        }
-
-        .system-label {
-            font-size: 0.85rem;
-            color: var(--text-color);
-            opacity: 0.8;
-            font-weight: 500;
-        }
-
-        .system-percentage {
-            font-size: 0.8rem;
-            color: var(--success-color);
-            font-weight: 600;
-            margin-top: 8px;
-        }
-
-        .system-status {
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-top: 8px;
-            padding: 4px 10px;
-            border-radius: 15px;
-        }
-
-        .status-success {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-danger {
-            background: #fecaca;
-            color: #dc2626;
-        }
-
-        .result-description {
-            color: var(--text-color);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            padding: 15px;
-            background: var(--background-color);
-            border-radius: 10px;
-            border-right: 4px solid var(--primary-color);
-        }
-
-        /* شجرة الطاقة */
-        .energy-tabs {
-            display: flex;
-            background: var(--background-color);
-            padding: 10px;
-            gap: 8px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            flex-wrap: wrap;
-        }
-
-        .energy-tab {
-            flex: 1;
-            padding: 12px 16px;
-            border: none;
-            background: var(--border-color);
-            color: var(--text-color);
-            cursor: pointer;
-            border-radius: 8px;
-            font-family: inherit;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            min-width: 120px;
-        }
-
-        .energy-tab.active {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .energy-content {
-            display: none;
-        }
-
-        .energy-content.active {
-            display: block;
-        }
-
-        .combination-tabs {
-            display: flex;
-            background: var(--background-color);
-            padding: 8px;
-            gap: 6px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            flex-wrap: wrap;
-        }
-
-        .combination-tab {
-            flex: 1;
-            padding: 10px 14px;
-            border: none;
-            background: var(--border-color);
-            color: var(--text-color);
-            cursor: pointer;
-            border-radius: 6px;
-            font-family: inherit;
-            font-weight: 500;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-            min-width: 100px;
-        }
-
-        .combination-tab.active {
-            background: var(--info-color);
-            color: white;
-        }
-
-        .combination-content {
-            display: none;
-        }
-
-        .combination-content.active {
-            display: block;
-        }
-
-        .energy-grid {
-            display: grid;
-            gap: 15px;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            max-height: 500px;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .energy-card {
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            padding: 18px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-        }
-
-        .energy-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-        }
-
-        .energy-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .energy-title {
-            font-weight: 600;
-            color: var(--text-color);
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .time-badge {
-            background: var(--info-color);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .energy-value {
-            font-weight: 700;
-            color: var(--primary-color);
-            font-size: 1.1rem;
-        }
-
-        .energy-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            font-size: 0.85rem;
-        }
-
-        .energy-detail {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .energy-label {
-            color: var(--text-color);
-            opacity: 0.8;
-            font-weight: 500;
-            font-size: 0.8rem;
-        }
-
-        .energy-text {
-            color: var(--text-color);
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-color);
-            background: var(--background-color);
-            border-radius: 12px;
-            border: 2px dashed var(--border-color);
-        }
-
-        .comparison-badge {
-            display: inline-block;
-            background: var(--info-color);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            margin-left: 5px;
-        }
-
-        @media (max-width: 768px) {
-            .cards-container {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .person-card {
-                padding: 20px;
-            }
-            
-            .buttons {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-            }
-            
-            .stones-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .final-sequence {
-                font-size: 1.8rem;
-                padding: 20px;
-            }
-            
-            .zodiac-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .zodiac-details {
-                grid-template-columns: 1fr;
-            }
-            
-            .dominance-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .compatibility-tabs, .energy-tabs {
-                flex-direction: column;
-            }
-            
-            .combination-tabs {
-                flex-direction: column;
-            }
-            
-            .energy-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .header h1 {
-                font-size: 1.4rem;
-                margin-top: 40px;
-            }
-            
-            .theme-toggle {
-                position: relative;
-                top: 0;
-                left: 0;
-                margin-bottom: 15px;
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .person-card {
-                padding: 15px;
-            }
-            
-            .section-content {
-                padding: 20px;
-            }
-            
-            .final-sequence {
-                font-size: 1.5rem;
-                padding: 15px;
-            }
-            
-            .stone-char {
-                font-size: 2.5rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- النجوم الخلفية -->
+    <div class="stars" id="stars"></div>
+
     <div class="container">
         <button class="theme-toggle" id="themeToggle">
             <i class="fas fa-moon"></i> وضع الليل
         </button>
 
         <div class="header">
-            <h1>اللَّهُمَّ رَبَّنَا أَنزِلْ عَلَيْنَا مَائِدَةً مِّنَ السَّمَاءِ تَكُونُ لَنَا عِيدًا لِّأَوَّلِنَا وَآخِرِنَا وَآيَةً مِّنكَ ۖ وَارْزُقْنَا وَأَنتَ خَيْرُ الرَّازِقِينَ</h1>
-            <p>احـمد نــــاجي ابراهيـــم</p>
+            <h1 class="logo floating">اللَّهُمَّ رَبَّنَا أَنزِلْ عَلَيْنَا مَائِدَةً مِّنَ السَّمَاءِ</h1>
+            <p class="tagline">احـمد نــــاجي ابراهيـــم - التحليل الشامل</p>
         </div>
 
-        <div class="cards-container">
-            <div class="person-card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <div class="card-icon">
-                            <i class="fas fa-user-graduate"></i>
+        <div class="master-detail-layout">
+            <!-- القائمة الجانبية -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">التحليل الشامل</h3>
+                    <div class="nav-menu">
+                        <button class="nav-item active" data-target="input-data">
+                            <i class="fas fa-database"></i>
+                            <span>بيانات الإدخال</span>
+                        </button>
+                        <button class="nav-item" data-target="system4">
+                            <i class="fas fa-gem"></i>
+                            <span>نظام القرعة</span>
+                        </button>
+                        <button class="nav-item" data-target="zodiac">
+                            <i class="fas fa-star"></i>
+                            <span>تحليل الإبراج</span>
+                        </button>
+                        <button class="nav-item" data-target="dominance">
+                            <i class="fas fa-trophy"></i>
+                            <span>تحليل الحلبة</span>
+                        </button>
+                        <button class="nav-item" data-target="compatibility">
+                            <i class="fas fa-tree"></i>
+                            <span>شجرة التوافق</span>
+                        </button>
+                        <button class="nav-item" data-target="energy">
+                            <i class="fas fa-bolt"></i>
+                            <span>شجرة الطاقة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="sidebar-actions">
+                    <button class="btn btn-primary btn-block" id="calculateBtn">
+                        <i class="fas fa-calculator"></i>
+                        بدء التحليل
+                    </button>
+                    <button class="btn btn-outline btn-block" id="clearBtn">
+                        <i class="fas fa-eraser"></i>
+                        مسح الكل
+                    </button>
+                    <button class="btn btn-outline btn-block" id="sampleBtn">
+                        <i class="fas fa-vial"></i>
+                        بيانات تجريبية
+                    </button>
+                </div>
+            </div>
+
+            <!-- المحتوى الرئيسي -->
+            <div class="main-content">
+                <!-- قسم بيانات الإدخال -->
+                <div class="content-section active" id="input-data">
+                    <div class="section-header">
+                        <h2><i class="fas fa-database"></i> بيانات الإدخال</h2>
+                        <p>أدخل المعلومات المطلوبة للتحليل الشامل</p>
+                    </div>
+
+                    <div class="input-cards">
+                        <div class="input-card">
+                            <div class="card-header">
+                                <i class="fas fa-user-graduate"></i>
+                                <h3>بطاقة الطالب</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="studentName" class="input-label required">
+                                        <i class="fas fa-signature"></i>
+                                        اسم الطالب
+                                    </label>
+                                    <input type="text" id="studentName" class="input-field" placeholder="أدخل اسم الطالب الكامل">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="studentBirth" class="input-label">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        مواليد الطالب
+                                    </label>
+                                    <input type="date" id="studentBirth" class="input-field">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="motherName" class="input-label">
+                                        <i class="fas fa-female"></i>
+                                        اسم الأم
+                                    </label>
+                                    <input type="text" id="motherName" class="input-field" placeholder="أدخل اسم الأم الكامل">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="fatherName" class="input-label">
+                                        <i class="fas fa-male"></i>
+                                        اسم الأب
+                                    </label>
+                                    <input type="text" id="fatherName" class="input-field" placeholder="أدخل اسم الأب الكامل">
+                                </div>
+                            </div>
                         </div>
-                        بطاقة الطالب
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <label for="studentName" class="input-label required">
-                        <i class="fas fa-signature"></i>
-                        اسم الطالب
-                    </label>
-                    <input type="text" id="studentName" class="input-field" placeholder="أدخل اسم الطالب الكامل">
-                </div>
 
-                <div class="input-group">
-                    <label for="studentBirth" class="input-label">
-                        <i class="fas fa-calendar-alt"></i>
-                        مواليد الطالب
-                    </label>
-                    <input type="date" id="studentBirth" class="input-field">
-                </div>
+                        <div class="input-card">
+                            <div class="card-header">
+                                <i class="fas fa-user-tie"></i>
+                                <h3>بطاقة المطلوب</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="targetName" class="input-label">
+                                        <i class="fas fa-signature"></i>
+                                        اسم المطلوب
+                                    </label>
+                                    <input type="text" id="targetName" class="input-field" placeholder="أدخل اسم المطلوب الكامل">
+                                </div>
 
-                <div class="input-group">
-                    <label for="motherName" class="input-label">
-                        <i class="fas fa-female"></i>
-                        اسم الأم
-                    </label>
-                    <input type="text" id="motherName" class="input-field" placeholder="أدخل اسم الأم الكامل">
-                </div>
+                                <div class="form-group">
+                                    <label for="targetBirth" class="input-label">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        مواليد المطلوب
+                                    </label>
+                                    <input type="date" id="targetBirth" class="input-field">
+                                </div>
 
-                <div class="input-group">
-                    <label for="fatherName" class="input-label">
-                        <i class="fas fa-male"></i>
-                        اسم الأب
-                    </label>
-                    <input type="text" id="fatherName" class="input-field" placeholder="أدخل اسم الأب الكامل">
-                </div>
-            </div>
+                                <div class="form-group">
+                                    <label for="targetMotherName" class="input-label">
+                                        <i class="fas fa-female"></i>
+                                        اسم أم المطلوب
+                                    </label>
+                                    <input type="text" id="targetMotherName" class="input-field" placeholder="أدخل اسم أم المطلوب">
+                                </div>
 
-            <div class="person-card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <div class="card-icon">
-                            <i class="fas fa-user-tie"></i>
+                                <div class="form-group">
+                                    <label for="targetFatherName" class="input-label">
+                                        <i class="fas fa-male"></i>
+                                        اسم أب المطلوب
+                                    </label>
+                                    <input type="text" id="targetFatherName" class="input-field" placeholder="أدخل اسم أب المطلوب">
+                                </div>
+                            </div>
                         </div>
-                        بطاقة المطلوب
                     </div>
                 </div>
-                
-                <div class="input-group">
-                    <label for="targetName" class="input-label">
-                        <i class="fas fa-signature"></i>
-                        اسم المطلوب
-                    </label>
-                    <input type="text" id="targetName" class="input-field" placeholder="أدخل اسم المطلوب الكامل">
+
+                <!-- قسم نظام القرعة -->
+                <div class="content-section" id="system4">
+                    <div class="section-header">
+                        <h2><i class="fas fa-gem"></i> نظام القرعة</h2>
+                        <p>تحليل الأحجار والنتائج القرآنية</p>
+                    </div>
+                    <div class="results-content" id="system4Content">
+                        <!-- سيتم تعبئتها بالبيانات -->
+                    </div>
                 </div>
 
-                <div class="input-group">
-                    <label for="targetBirth" class="input-label">
-                        <i class="fas fa-calendar-alt"></i>
-                        مواليد المطلوب
-                    </label>
-                    <input type="date" id="targetBirth" class="input-field">
+                <!-- قسم الإبراج -->
+                <div class="content-section" id="zodiac">
+                    <div class="section-header">
+                        <h2><i class="fas fa-star"></i> تحليل الإبراج</h2>
+                        <p>التحليل الفلكي والتنبؤات</p>
+                    </div>
+                    <div class="results-content" id="zodiacContent">
+                        <!-- سيتم تعبئتها بالبيانات -->
+                    </div>
                 </div>
 
-                <div class="input-group">
-                    <label for="targetMotherName" class="input-label">
-                        <i class="fas fa-female"></i>
-                        اسم أم المطلوب
-                    </label>
-                    <input type="text" id="targetMotherName" class="input-field" placeholder="أدخل اسم أم المطلوب">
+                <!-- قسم الحلبة -->
+                <div class="content-section" id="dominance">
+                    <div class="section-header">
+                        <h2><i class="fas fa-trophy"></i> تحليل الحلبة</h2>
+                        <p>تحليل الهيمنة والتفوق</p>
+                    </div>
+                    <div class="results-content" id="dominanceContent">
+                        <!-- سيتم تعبئتها بالبيانات -->
+                    </div>
                 </div>
 
-                <div class="input-group">
-                    <label for="targetFatherName" class="input-label">
-                        <i class="fas fa-male"></i>
-                        اسم أب المطلوب
-                    </label>
-                    <input type="text" id="targetFatherName" class="input-field" placeholder="أدخل اسم أب المطلوب">
+                <!-- قسم شجرة التوافق -->
+                <div class="content-section" id="compatibility">
+                    <div class="section-header">
+                        <h2><i class="fas fa-tree"></i> شجرة التوافق</h2>
+                        <p>تحليل التوافق والتناغم - عرض موازي</p>
+                    </div>
+                    <div class="results-content" id="compatibilityContent">
+                        <div class="parallel-compatibility">
+                            <div class="compatibility-column">
+                                <div class="column-header">
+                                    <i class="fas fa-text-height"></i>
+                                    <h3>الجمل الكبير</h3>
+                                </div>
+                                <div class="compatibility-results" id="largeCompatibilityResults">
+                                    <!-- سيتم تعبئتها بالبيانات -->
+                                </div>
+                            </div>
+                            
+                            <div class="compatibility-column">
+                                <div class="column-header">
+                                    <i class="fas fa-text-width"></i>
+                                    <h3>الجمل الصغير</h3>
+                                </div>
+                                <div class="compatibility-results" id="smallCompatibilityResults">
+                                    <!-- سيتم تعبئتها بالبيانات -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- قسم شجرة الطاقة -->
+                <div class="content-section" id="energy">
+                    <div class="section-header">
+                        <h2><i class="fas fa-bolt"></i> شجرة الطاقة</h2>
+                        <p>تحليل الطاقة والتوقيتات</p>
+                    </div>
+                    <div class="results-content" id="energyContent">
+                        <div class="energy-tabs">
+                            <button class="energy-tab active" data-system="days">تحليل الأيام</button>
+                            <button class="energy-tab" data-system="months">تحليل الأشهر</button>
+                        </div>
+
+                        <div class="energy-content active" id="daysEnergy">
+                            <div class="combination-tabs">
+                                <button class="combination-tab active" data-combination="student-mother-days">الطالب مع الأم</button>
+                                <button class="combination-tab" data-combination="student-father-days">الطالب مع الأب</button>
+                                <button class="combination-tab" data-combination="student-parents-days">الطالب مع الوالدين</button>
+                            </div>
+
+                            <div class="combination-content active" id="student-mother-days-content">
+                                <div class="energy-grid" id="student-mother-days-results"></div>
+                            </div>
+
+                            <div class="combination-content" id="student-father-days-content">
+                                <div class="energy-grid" id="student-father-days-results"></div>
+                            </div>
+
+                            <div class="combination-content" id="student-parents-days-content">
+                                <div class="energy-grid" id="student-parents-days-results"></div>
+                            </div>
+                        </div>
+
+                        <div class="energy-content" id="monthsEnergy">
+                            <div class="combination-tabs">
+                                <button class="combination-tab active" data-combination="student-mother-months">الطالب مع الأم</button>
+                                <button class="combination-tab" data-combination="student-father-months">الطالب مع الأب</button>
+                                <button class="combination-tab" data-combination="student-parents-months">الطالب مع الوالدين</button>
+                            </div>
+
+                            <div class="combination-content active" id="student-mother-months-content">
+                                <div class="energy-grid" id="student-mother-months-results"></div>
+                            </div>
+
+                            <div class="combination-content" id="student-father-months-content">
+                                <div class="energy-grid" id="student-father-months-results"></div>
+                            </div>
+
+                            <div class="combination-content" id="student-parents-months-content">
+                                <div class="energy-grid" id="student-parents-months-results"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="buttons">
-            <button class="btn btn-primary" id="calculateBtn">
-                <i class="fas fa-calculator"></i>
-                حـــــــــــــــــلل
-            </button>
-            <button class="btn btn-outline" id="clearBtn">
-                <i class="fas fa-eraser"></i>
-                مسح الكل
-            </button>
-            <button class="btn btn-outline" id="sampleBtn">
-                <i class="fas fa-vial"></i>
-                بيانات تجريبية
-            </button>
-        </div>
-
-        <div class="results-section" id="resultsSection" style="display: none;">
-            <!-- نظام القرعة -->
-            <div class="section-header" data-section="system4">
-                <div class="section-title">
-                    <i class="fas fa-gem section-icon"></i>
-                    نظام القرعة
-                </div>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="section-content" id="system4Content">
-                <!-- سيتم تعبئتها بالبيانات -->
-            </div>
-
-            <!-- الإبراج -->
-            <div class="section-header" data-section="zodiac">
-                <div class="section-title">
-                    <i class="fas fa-star section-icon"></i>
-                    تحليل الإبراج
-                </div>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="section-content" id="zodiacContent">
-                <!-- سيتم تعبئتها بالبيانات -->
-            </div>
-
-            <!-- الحلبة -->
-            <div class="section-header" data-section="dominance">
-                <div class="section-title">
-                    <i class="fas fa-trophy section-icon"></i>
-                    تحليل الحلبة
-                </div>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="section-content" id="dominanceContent">
-                <!-- سيتم تعبئتها بالبيانات -->
-            </div>
-
-            <!-- شجرة التوافق -->
-            <div class="section-header" data-section="compatibility">
-                <div class="section-title">
-                    <i class="fas fa-tree section-icon"></i>
-                    شجرة التوافق
-                </div>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="section-content" id="compatibilityContent">
-                <div class="compatibility-tabs">
-                    <button class="compatibility-tab active" data-system="large">الجمل الكبير</button>
-                    <button class="compatibility-tab" data-system="small">الجمل الصغير</button>
-                </div>
-
-                <div class="compatibility-content active" id="largeCompatibility">
-                    <div class="results-grid" id="largeCompatibilityResults"></div>
-                </div>
-
-                <div class="compatibility-content" id="smallCompatibility">
-                    <div class="results-grid" id="smallCompatibilityResults"></div>
-                </div>
-            </div>
-
-            <!-- شجرة الطاقة -->
-            <div class="section-header" data-section="energy">
-                <div class="section-title">
-                    <i class="fas fa-bolt section-icon"></i>
-                    شجرة الطاقة
-                </div>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="section-content" id="energyContent">
-                <div class="energy-tabs">
-                    <button class="energy-tab active" data-system="days">تحليل الأيام</button>
-                    <button class="energy-tab" data-system="months">تحليل الأشهر</button>
-                </div>
-
-                <div class="energy-content active" id="daysEnergy">
-                    <div class="combination-tabs">
-                        <button class="combination-tab active" data-combination="student-mother-days">الطالب مع الأم</button>
-                        <button class="combination-tab" data-combination="student-father-days">الطالب مع الأب</button>
-                        <button class="combination-tab" data-combination="student-parents-days">الطالب مع الوالدين</button>
-                    </div>
-
-                    <div class="combination-content active" id="student-mother-days-content">
-                        <div class="energy-grid" id="student-mother-days-results"></div>
-                    </div>
-
-                    <div class="combination-content" id="student-father-days-content">
-                        <div class="energy-grid" id="student-father-days-results"></div>
-                    </div>
-
-                    <div class="combination-content" id="student-parents-days-content">
-                        <div class="energy-grid" id="student-parents-days-results"></div>
-                    </div>
-                </div>
-
-                <div class="energy-content" id="monthsEnergy">
-                    <div class="combination-tabs">
-                        <button class="combination-tab active" data-combination="student-mother-months">الطالب مع الأم</button>
-                        <button class="combination-tab" data-combination="student-father-months">الطالب مع الأب</button>
-                        <button class="combination-tab" data-combination="student-parents-months">الطالب مع الوالدين</button>
-                    </div>
-
-                    <div class="combination-content active" id="student-mother-months-content">
-                        <div class="energy-grid" id="student-mother-months-results"></div>
-                    </div>
-
-                    <div class="combination-content" id="student-father-months-content">
-                        <div class="energy-grid" id="student-father-months-results"></div>
-                    </div>
-
-                    <div class="combination-content" id="student-parents-months-content">
-                        <div class="energy-grid" id="student-parents-months-results"></div>
-                    </div>
-                </div>
-            </div>
+        
+        <div class="footer">
+            <p class="footer-text">نظام أحمد ناجي © 2026 - 2027</p>
         </div>
     </div>
 
-    <script>
-        // ========== الأنظمة الأساسية ==========
-        class DualTaroSystem {
-            constructor() {
-                this.largeAbjad = {
-                    'ا':1, 'أ':1, 'إ':1, 'آ':1, 'ب':2, 'ج':3, 'د':4, 'ه':5, 
-                    'و':6, 'ز':7, 'ح':8, 'ط':9, 'ي':10, 'ك':20, 'ل':30, 'م':40,
-                    'ن':50, 'س':60, 'ع':70, 'ف':80, 'ص':90, 'ق':100, 'ر':200,
-                    'ش':300, 'ت':400, 'ث':500, 'خ':600, 'ذ':700, 'ض':800,
-                    'ظ':900, 'غ':1000, 'ة':400, 'ى':10, 'ؤ':6, 'ئ':6, 'ء':6, ' ':0
-                };
-
-                this.smallAbjad = {
-                    'ا':111, 'أ':13, 'إ':13, 'آ':13, 'ب':3, 'ج':53, 'د':35, 'ه':6, 
-                    'و':13, 'ز':18, 'ح':9, 'ط':10, 'ي':11, 'ك':101, 'ل':71, 'م':90,
-                    'ن':106, 'س':120, 'ع':130, 'ف':81, 'ص':95, 'ق':181, 'ر':201,
-                    'ش':360, 'ت':401, 'ث':501, 'خ':601, 'ذ':731, 'ض':801,
-                    'ظ':901, 'غ':1060, 'ة':401, 'ى':11, 'ؤ':13, 'ئ':13, 'ء':13, ' ':0
-                };
-
-                this.system4Stones = {
-                    1: { stone: '𐩱', name: 'الحجر الأول' },
-                    2: { stone: '𐩨', name: 'الحجر الثاني' },
-                    3: { stone: '𐩴', name: 'الحجر الثالث' },
-                    4: { stone: '𐩵', name: 'الحجر الرابع' }
-                };
-
-                this.dominanceRules = {
-                    "1-3": true, "1-5": true, "1-7": true, "1-9": true,
-                    "2-1": true, "2-4": true, "2-6": true, "2-8": true,
-                    "3-2": true, "3-5": true, "3-7": true, "3-9": true,
-                    "4-1": true, "4-3": true, "4-6": true, "4-8": true,
-                    "5-2": true, "5-4": true, "5-7": true, "5-9": true,
-                    "6-1": true, "6-3": true, "6-5": true, "6-8": true,
-                    "7-2": true, "7-4": true, "7-6": true, "7-9": true,
-                    "8-1": true, "8-3": true, "8-5": true, "8-7": true,
-                    "9-2": true, "9-4": true, "9-6": true, "9-8": true
-                };
-
-                this.equalNumberRules = {
-                    1: "الطالب", 2: "المطلوب", 3: "الطالب", 4: "المطلوب",
-                    5: "الطالب", 6: "المطلوب", 7: "الطالب", 8: "المطلوب", 9: "الطالب"
-                };
-
-                this.zodiacData = {
-                    "الجدي": { dates: "23.12 - 20.1", element: "earth", planet: "زحل", metal: "الرصاص", day: "السبت", workingSigns: "الميزان - الدلو - الجدي" },
-                    "الدلو": { dates: "21.1 - 19.2", element: "air", planet: "زحل", metal: "الرصاص", day: "السبت", workingSigns: "الميزان - الدلو - الجدي" },
-                    "الحوت": { dates: "20.2 - 21.3", element: "water", planet: "المشتري", metal: "القصدير", day: "الخميس", workingSigns: "السرطان - الحوت - القوس" },
-                    "الحمل": { dates: "22.3 - 20.4", element: "fire", planet: "المريخ", metal: "النحاس", day: "الثلاثاء", workingSigns: "الأسد - الجدي - العقرب - الحمل" },
-                    "الثور": { dates: "21.4 - 21.5", element: "earth", planet: "الزهرة", metal: "الحديد", day: "الجمعة", workingSigns: "الدلو - الحوت - الميزان - الثور" },
-                    "الجوزاء": { dates: "22.5 - 21.6", element: "air", planet: "عطارد", metal: "الزئبق", day: "الأربعاء", workingSigns: "الجوزاء - العذراء" },
-                    "السرطان": { dates: "22.6 - 23.7", element: "water", planet: "القمر", metal: "الفضة", day: "الاثنين", workingSigns: "السرطان - الحوت - القوس" },
-                    "الأسد": { dates: "24.7 - 23.8", element: "fire", planet: "الشمس", metal: "الذهب", day: "الأحد", workingSigns: "الحمل - الأسد" },
-                    "العذراء": { dates: "24.8 - 23.9", element: "earth", planet: "عطارد", metal: "الزئبق", day: "الأربعاء", workingSigns: "الجوزاء - العذراء" },
-                    "الميزان": { dates: "24.9 - 23.10", element: "air", planet: "الزهرة", metal: "الحديد", day: "الجمعة", workingSigns: "الدلو - الحوت - الميزان - الثور" },
-                    "العقرب": { dates: "24.10 - 22.11", element: "water", planet: "المريخ", metal: "النحاس", day: "الثلاثاء", workingSigns: "الأسد - الجدي - العقرب - الحمل" },
-                    "القوس": { dates: "23.11 - 22.12", element: "fire", planet: "المشتري", metal: "القصدير", day: "الخميس", workingSigns: "السرطان - الحوت - القوس" }
-                };
-
-                this.elementLetters = {
-                    "fire": "ا ه ط م ف ش ذ",
-                    "earth": "ب و ي ن ص ت ض", 
-                    "air": "ج ز ك س ق ث ظ",
-                    "water": "د ح ل ع ر خ غ"
-                };
-
-                this.elementCompatibility = {
-                    "fire": { good: ["air", "fire"], bad: ["water", "earth"] },
-                    "earth": { good: ["water", "earth"], bad: ["air", "fire"] },
-                    "air": { good: ["fire", "air"], bad: ["earth", "water"] },
-                    "water": { good: ["earth", "water"], bad: ["fire", "air"] }
-                };
-
-                // النسب الأصلية محفوظة كما هي
-                this.desc9 = [
-                    {}, 
-                    {text: "فهو وطيء لا خير فيه", percent: 20},
-                    {text: "فهو طيب", percent: 37.2},
-                    {text: "أوله وطيء آخره رديء يتبعها فرج", percent: 18.6},
-                    {text: "فيه قوة بمن وتوفيقه وطيء", percent: 24.8},
-                    {text: "بيت البنين", percent: 43.4},
-                    {text: "أوله طيب وآخره هم وغم", percent: 0.4},
-                    {text: "بيت الفراش ووقت لك وآخر عليك", percent: 31},
-                    {text: "بيت الاتكاء فهو جيد ونيل مطلب", percent: 49.5},
-                    {text: "فرحيل ونزاع وفرار", percent: 0.1}
-                ];
-
-                this.desc8 = [
-                    {},
-                    {text: "فيه خير ورزق", percent: 33},
-                    {text: "يتزوجها ويلد منها", percent: 27.5},
-                    {text: "لا يتزوجها ولا خير فيه", percent: 0.3},
-                    {text: "يتزوجها بطلب منها", percent: 22},
-                    {text: "اول زواجهما ضيق يتبعها وسع", percent: 12.4},
-                    {text: "يتزوجها ويلد منها وتحبه الناس والسلاطين", percent: 44},
-                    {text: "يتزوجها ويلد منها", percent: 38.5},
-                    {text: "يتزوجها وتحبه ويحبها وتلد منه", percent: 49.6}
-                ];
-
-                // إضافة نظام 5 الجديد
-                this.desc5 = [
-                    {},
-                    {text: "يجتمعان - توافق جيد", percent: 10},
-                    {text: "لا يجتمعان - عدم توافق", percent: 1.5},
-                    {text: "يجتمعان - توافق متوسط", percent: 10}, 
-                    {text: "لا يجتمعان - عدم توافق", percent: 1.5},
-                    {text: "يجتمعان - توافق ممتاز", percent: 10}
-                ];
-
-                this.energyTable = [
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 98, 7.8, 6.8, 7.4, 88, 5.8, 94, 6.6, 6.2, 90, 98, 5.5],
-                    [0, 5.75, 3.75, 2.75, 3.35, 47.5, 17.5, 5.35, 2.55, 2.15, 4.95, 57.5, 10],
-                    [0, 94, 7.4, 6.4, 7, 84, 5.4, 90, 4.1, 5.8, 86, 94, 4.65],
-                    [0, 7.3, 53, 4.3, 49, 63, 3.3, 6.9, 4.1, 3.7, 6.5, 73, 2.5],
-                    [0, 6.6, 4.6, 36, 4.2, 56, 2.6, 6.2, 34, 30, 5.8, 66, 1.8],
-                    [0, 6.2, 4.2, 32, 3.8, 52, 2.2, 5.8, 30, 26, 5.4, 62, 1.4],
-                    [0, 5.5, 3.5, 2.5, 3.1, 45, 15, 5.1, 2.3, 1.9, 4.7, 55, 7.5]
-                ];
-
-                this.days = [
-                    {name: "الأحد", value: 44, order: 1},
-                    {name: "الإثنين", value: 642, order: 2},
-                    {name: "الثلاثاء", value: 1069, order: 3},
-                    {name: "الأربعاء", value: 311, order: 4},
-                    {name: "الخميس", value: 741, order: 5},
-                    {name: "الجمعة", value: 544, order: 6},
-                    {name: "السبت", value: 493, order: 7}
-                ];
-
-                this.months = [
-                    {name: "محرم", value: 288, order: 1},
-                    {name: "صفر", value: 370, order: 2},
-                    {name: "ربيع الأول", value: 319, order: 3},
-                    {name: "ربيع الثاني", value: 1083, order: 4},
-                    {name: "جمادى الأولى", value: 85, order: 5},
-                    {name: "جمادى الآخرة", value: 849, order: 6},
-                    {name: "رجب", value: 205, order: 7},
-                    {name: "شعبان", value: 423, order: 8},
-                    {name: "رمضان", value: 1091, order: 9},
-                    {name: "شوال", value: 337, order: 10},
-                    {name: "ذو القعدة", value: 1311, order: 11},
-                    {name: "ذو الحجة", value: 1148, order: 12}
-                ];
-
-                this.energyTypes = ["", "الجن", "الهواء", "السحر", "العين", "الدم", "الصفراء", "الكرب"];
-                this.energyEffects = ["", "الجن", "عين انثى", "عضال", "عين رجل", "قرين", "ريح", "ارضي", "الدم", "الصفراء", "سحر ادمي", "قرينة", "الغم"];
-            }
-
-            reduceToSingleDigit(number) {
-                let num = number;
-                while (num > 9) {
-                    let sum = 0;
-                    const numStr = num.toString();
-                    for (let i = 0; i < numStr.length; i++) {
-                        sum += parseInt(numStr[i]);
-                    }
-                    num = sum;
-                }
-                return num;
-            }
-
-            calculateDominance(studentLarge, targetLarge) {
-                if (!studentLarge || !targetLarge) {
-                    return null;
-                }
-
-                const studentReduced = this.reduceToSingleDigit(studentLarge);
-                const targetReduced = this.reduceToSingleDigit(targetLarge);
-                
-                let dominant, description, studentStatus, targetStatus;
-
-                if (studentReduced === targetReduced) {
-                    dominant = this.equalNumberRules[studentReduced];
-                    description = `الطالب والمطلوب نفس الرقم (${studentReduced}) - ${dominant} يغلب`;
-                    studentStatus = dominant === "الطالب" ? "غالب" : "مغلوب";
-                    targetStatus = dominant === "المطلوب" ? "غالب" : "مغلوب";
-                }
-                else if (this.dominanceRules[`${studentReduced}-${targetReduced}`]) {
-                    dominant = "الطالب";
-                    description = `الطالب (${studentReduced}) يغلب المطلوب (${targetReduced})`;
-                    studentStatus = "غالب";
-                    targetStatus = "مغلوب";
-                }
-                else if (this.dominanceRules[`${targetReduced}-${studentReduced}`]) {
-                    dominant = "المطلوب";
-                    description = `المطلوب (${targetReduced}) يغلب الطالب (${studentReduced})`;
-                    studentStatus = "مغلوب";
-                    targetStatus = "غالب";
-                }
-                else {
-                    dominant = studentReduced > targetReduced ? "الطالب" : "المطلوب";
-                    description = dominant === "الطالب" ? 
-                        `الطالب (${studentReduced}) يغلب المطلوب (${targetReduced})` :
-                        `المطلوب (${targetReduced}) يغلب الطالب (${studentReduced})`;
-                    studentStatus = dominant === "الطالب" ? "غالب" : "مغلوب";
-                    targetStatus = dominant === "المطلوب" ? "غالب" : "مغلوب";
-                }
-                
-                return {
-                    studentNumber: studentReduced,
-                    targetNumber: targetReduced,
-                    dominant: dominant,
-                    description: description,
-                    studentStatus: studentStatus,
-                    targetStatus: targetStatus
-                };
-            }
-
-            getZodiacSign(birthDate) {
-                if (!birthDate) return null;
-                
-                const date = new Date(birthDate);
-                const day = date.getDate();
-                const month = date.getMonth() + 1;
-                
-                if ((month === 12 && day >= 23) || (month === 1 && day <= 20)) return "الجدي";
-                if ((month === 1 && day >= 21) || (month === 2 && day <= 19)) return "الدلو";
-                if ((month === 2 && day >= 20) || (month === 3 && day <= 21)) return "الحوت";
-                if ((month === 3 && day >= 22) || (month === 4 && day <= 20)) return "الحمل";
-                if ((month === 4 && day >= 21) || (month === 5 && day <= 21)) return "الثور";
-                if ((month === 5 && day >= 22) || (month === 6 && day <= 21)) return "الجوزاء";
-                if ((month === 6 && day >= 22) || (month === 7 && day <= 23)) return "السرطان";
-                if ((month === 7 && day >= 24) || (month === 8 && day <= 23)) return "الأسد";
-                if ((month === 8 && day >= 24) || (month === 9 && day <= 23)) return "العذراء";
-                if ((month === 9 && day >= 24) || (month === 10 && day <= 23)) return "الميزان";
-                if ((month === 10 && day >= 24) || (month === 11 && day <= 22)) return "العقرب";
-                if ((month === 11 && day >= 23) || (month === 12 && day <= 22)) return "القوس";
-                
-                return null;
-            }
-
-            getLetterElement(char) {
-                for (const [element, letters] of Object.entries(this.elementLetters)) {
-                    if (letters.includes(char)) {
-                        return element;
-                    }
-                }
-                return null;
-            }
-
-            analyzeNameElements(name) {
-                if (!name) return { elements: [], dominantElement: null };
-                
-                const elements = [];
-                for (let char of name) {
-                    if (char !== ' ') {
-                        const element = this.getLetterElement(char);
-                        if (element) {
-                            elements.push({ char, element });
-                        }
-                    }
-                }
-                
-                const elementCount = {};
-                elements.forEach(item => {
-                    elementCount[item.element] = (elementCount[item.element] || 0) + 1;
-                });
-                
-                let dominantElement = null;
-                let maxCount = 0;
-                for (const [element, count] of Object.entries(elementCount)) {
-                    if (count > maxCount) {
-                        maxCount = count;
-                        dominantElement = element;
-                    }
-                }
-                
-                return { elements, dominantElement };
-            }
-
-            getZodiacCompatibility(sign1, sign2) {
-                if (!sign1 || !sign2) return "غير محدد";
-                
-                const element1 = this.zodiacData[sign1]?.element;
-                const element2 = this.zodiacData[sign2]?.element;
-                
-                if (!element1 || !element2) return "غير محدد";
-                
-                if (this.elementCompatibility[element1].good.includes(element2)) {
-                    return `توافق جيد - برج ${sign1} ${this.getElementName(element1)} وبرج ${sign2} ${this.getElementName(element2)}`;
-                } else if (this.elementCompatibility[element1].bad.includes(element2)) {
-                    return `توافق ضعيف - برج ${sign1} ${this.getElementName(element1)} وبرج ${sign2} ${this.getElementName(element2)}`;
-                } else {
-                    return `توافق متوسط - برج ${sign1} ${this.getElementName(element1)} وبرج ${sign2} ${this.getElementName(element2)}`;
-                }
-            }
-
-            getElementName(element) {
-                const names = {
-                    "fire": "الناري",
-                    "earth": "الترابي", 
-                    "air": "الهوائي",
-                    "water": "المائي"
-                };
-                return names[element] || element;
-            }
-
-            calculateNameDual(name) {
-                if (!name) return { 
-                    large: {sum: 0, details: []}, 
-                    small: {sum: 0, details: []}
-                };
-                
-                let largeSum = 0;
-                let smallSum = 0;
-                let largeDetails = [];
-                let smallDetails = [];
-                
-                for (let char of name) {
-                    const largeValue = this.largeAbjad[char] || 0;
-                    const smallValue = this.smallAbjad[char] || 0;
-                    
-                    largeSum += largeValue;
-                    smallSum += smallValue;
-                    
-                    if (largeValue > 0) {
-                        largeDetails.push({char, value: largeValue});
-                    }
-                    if (smallValue > 0) {
-                        smallDetails.push({char, value: smallValue});
-                    }
-                }
-                
-                return {
-                    large: { sum: largeSum, details: largeDetails },
-                    small: { sum: smallSum, details: smallDetails }
-                };
-            }
-
-            calculateSystem4Result(name) {
-                if (!name) return { 
-                    sum: 0, 
-                    details: [], 
-                    reduction: 0, 
-                    stone: '----',
-                    stoneName: 'غير محسوب',
-                    reductionSteps: []
-                };
-                
-                let sum = 0;
-                let details = [];
-                
-                for (let char of name) {
-                    const value = this.largeAbjad[char] || 0;
-                    sum += value;
-                    if (value > 0 && char !== ' ') {
-                        details.push({char, value});
-                    }
-                }
-                
-                let reductionResult = this.reduceToSingleDigitWithSteps(sum);
-                const stoneNumber = (reductionResult.final % 4 === 0) ? 4 : (reductionResult.final % 4);
-                const stoneInfo = this.system4Stones[stoneNumber] || { stone: '----', name: 'غير معروف' };
-                
-                return {
-                    sum,
-                    details,
-                    reduction: reductionResult.final,
-                    stone: stoneInfo.stone,
-                    stoneName: stoneInfo.name,
-                    stoneNumber,
-                    reductionSteps: reductionResult.steps
-                };
-            }
-
-            reduceToSingleDigitWithSteps(number) {
-                let steps = [];
-                let current = number;
-                
-                while (current > 9) {
-                    let numStr = current.toString();
-                    let sum = 0;
-                    let step = '';
-                    
-                    for (let i = 0; i < numStr.length; i++) {
-                        sum += parseInt(numStr[i]);
-                        step += numStr[i];
-                        if (i < numStr.length - 1) {
-                            step += ' + ';
-                        }
-                    }
-                    step += ' = ' + sum;
-                    steps.push(step);
-                    current = sum;
-                }
-                
-                return {
-                    final: current,
-                    steps: steps
-                };
-            }
-
-            calculateMod5Compatibility(studentLarge, studentSmall, parent1Large, parent1Small, 
-                                     parent2Large, parent2Small, targetLarge, targetSmall, 
-                                     targetParent1Large, targetParent1Small, targetParent2Large, targetParent2Small) {
-                
-                const largeTotal = studentLarge + parent1Large + parent2Large + 
-                                 targetLarge + targetParent1Large + targetParent2Large;
-                const smallTotal = studentSmall + parent1Small + parent2Small + 
-                                 targetSmall + targetParent1Small + targetParent2Small;
-                
-                const largeMod5 = (largeTotal % 5) || 5;
-                const smallMod5 = (smallTotal % 5) || 5;
-                
-                return {
-                    large: {
-                        totalValue: largeTotal,
-                        mod5Value: largeMod5,
-                        meets: (largeMod5 === 1 || largeMod5 === 3 || largeMod5 === 5),
-                        ...this.desc5[largeMod5]
-                    },
-                    small: {
-                        totalValue: smallTotal,
-                        mod5Value: smallMod5,
-                        meets: (smallMod5 === 1 || smallMod5 === 3 || smallMod5 === 5),
-                        ...this.desc5[smallMod5]
-                    }
-                };
-            }
-
-            calculateCompatibility(studentLarge, studentSmall, studentParent1Large, studentParent1Small, 
-                                  studentParent2Large, studentParent2Small, targetLarge, targetSmall, 
-                                  targetParent1Large, targetParent1Small, targetParent2Large, targetParent2Small) {
-                
-                const largeTotal = studentLarge + studentParent1Large + studentParent2Large + 
-                                 targetLarge + targetParent1Large + targetParent2Large + 7;
-                const smallTotal = studentSmall + studentParent1Small + studentParent2Small + 
-                                 targetSmall + targetParent1Small + targetParent2Small + 7;
-                
-                const largeMod9 = (largeTotal % 9) || 9;
-                const largeMod8 = (largeTotal % 8) || 8;
-                const smallMod9 = (smallTotal % 9) || 9;
-                const smallMod8 = (smallTotal % 8) || 8;
-                
-                // إضافة نظام 5
-                const mod5Result = this.calculateMod5Compatibility(
-                    studentLarge, studentSmall, studentParent1Large, studentParent1Small, 
-                    studentParent2Large, studentParent2Small, targetLarge, targetSmall, 
-                    targetParent1Large, targetParent1Small, targetParent2Large, targetParent2Small
-                );
-                
-                return {
-                    large: {
-                        mod9: { ...this.desc9[largeMod9], value: largeMod9 },
-                        mod8: { ...this.desc8[largeMod8], value: largeMod8 },
-                        mod5: mod5Result.large,
-                        totalValue: largeTotal,
-                        mod9Value: largeMod9,
-                        mod8Value: largeMod8,
-                        mod5Value: mod5Result.large.mod5Value
-                    },
-                    small: {
-                        mod9: { ...this.desc9[smallMod9], value: smallMod9 },
-                        mod8: { ...this.desc8[smallMod8], value: smallMod8 },
-                        mod5: mod5Result.small,
-                        totalValue: smallTotal,
-                        mod9Value: smallMod9,
-                        mod8Value: smallMod8,
-                        mod5Value: mod5Result.small.mod5Value
-                    }
-                };
-            }
-
-            calculateEnergy(studentLarge, studentSmall, parent1Large, parent1Small, 
-                           parent2Large, parent2Small, timeValue, isMonth = false) {
-                const largeTotal = studentLarge + parent1Large + parent2Large + timeValue;
-                const smallTotal = studentSmall + parent1Small + parent2Small + timeValue;
-                
-                const largeMod7 = (largeTotal % 7) || 7;
-                const largeMod12 = (largeTotal % 12) || 12;
-                const smallMod7 = (smallTotal % 7) || 7;
-                const smallMod12 = (smallTotal % 12) || 12;
-                
-                const safeLargeMod7 = Math.max(1, Math.min(7, largeMod7));
-                const safeLargeMod12 = Math.max(1, Math.min(12, largeMod12));
-                const safeSmallMod7 = Math.max(1, Math.min(7, smallMod7));
-                const safeSmallMod12 = Math.max(1, Math.min(12, smallMod12));
-                
-                const largeRatio = (this.energyTable[safeLargeMod7] && this.energyTable[safeLargeMod7][safeLargeMod12]) || 0;
-                const smallRatio = (this.energyTable[safeSmallMod7] && this.energyTable[safeSmallMod7][safeSmallMod12]) || 0;
-                
-                const timeName = isMonth ? 
-                    this.months.find(m => m.value === timeValue)?.name || "غير معروف" :
-                    this.days.find(d => d.value === timeValue)?.name || "غير معروف";
-                
-                const timeOrder = isMonth ? 
-                    this.months.find(m => m.value === timeValue)?.order || 0 :
-                    this.days.find(d => d.value === timeValue)?.order || 0;
-                
-                return {
-                    large: {
-                        timeName: timeName,
-                        timeOrder: timeOrder,
-                        energyType: this.energyTypes[safeLargeMod7] || "غير معروف",
-                        energyEffect: this.energyEffects[safeLargeMod12] || "غير معروف",
-                        ratio: largeRatio,
-                        total: largeTotal,
-                        mod7: safeLargeMod7,
-                        mod12: safeLargeMod12,
-                        energyClass: largeRatio >= 60 ? 'high' : largeRatio >= 30 ? 'medium' : 'low'
-                    },
-                    small: {
-                        timeName: timeName,
-                        timeOrder: timeOrder,
-                        energyType: this.energyTypes[safeSmallMod7] || "غير معروف",
-                        energyEffect: this.energyEffects[safeSmallMod12] || "غير معروف",
-                        ratio: smallRatio,
-                        total: smallTotal,
-                        mod7: safeSmallMod7,
-                        mod12: safeSmallMod12,
-                        energyClass: smallRatio >= 60 ? 'high' : smallRatio >= 30 ? 'medium' : 'low'
-                    }
-                };
-            }
-        }
-
-        // ========== التطبيق الرئيسي ==========
-        const dualTaro = new DualTaroSystem();
-
-        // الدوال الرئيسية
-        function calculateAllResults() {
-            const student = document.getElementById('studentName').value.trim();
-            const studentBirth = document.getElementById('studentBirth').value;
-            const mother = document.getElementById('motherName').value.trim();
-            const father = document.getElementById('fatherName').value.trim();
-            const target = document.getElementById('targetName').value.trim();
-            const targetBirth = document.getElementById('targetBirth').value;
-            const targetMother = document.getElementById('targetMotherName').value.trim();
-            const targetFather = document.getElementById('targetFatherName').value.trim();
-
-            if (!student) {
-                alert('⚠️ يرجى إدخال اسم الطالب على الأقل');
-                return;
-            }
-
-            // حساب وعرض جميع النتائج
-            showSystem4Results(student, mother, father);
-            showZodiacAnalysis(student, studentBirth, target, targetBirth);
-            
-            if (target) {
-                showDominanceAnalysis(student, target);
-                showCompatibilityResults(student, mother, father, target, targetMother, targetFather);
-            } else {
-                showCompatibilityNoTarget();
-            }
-            
-            calculateAndDisplayAllEnergyResults(student, mother, father);
-            
-            document.getElementById('resultsSection').style.display = 'block';
-            
-            // فتح جميع الأقسام تلقائياً
-            document.querySelectorAll('.section-content').forEach(content => {
-                content.style.display = 'block';
-            });
-            document.querySelectorAll('.section-header .fa-chevron-down').forEach(icon => {
-                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
-            });
-        }
-
-        function showSystem4Results(student, mother, father) {
-            const container = document.getElementById('system4Content');
-            
-            if (!student) {
-                container.innerHTML = `
-                    <div class="no-results">
-                        <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 15px; color: var(--danger-color);"></i>
-                        <h3>أدخل اسم الطالب على الأقل</h3>
-                    </div>
-                `;
-                return;
-            }
-
-            const results = [];
-            
-            // الطالب (إجباري)
-            results.push({ 
-                name: student, 
-                type: 'الطالب', 
-                result: dualTaro.calculateSystem4Result(student) 
-            });
-            
-            // الأم (اختياري)
-            if (mother && mother.trim() !== '') {
-                results.push({ 
-                    name: mother, 
-                    type: 'الأم', 
-                    result: dualTaro.calculateSystem4Result(mother) 
-                });
-            } else {
-                results.push({ 
-                    name: '----', 
-                    type: 'الأم', 
-                    result: { stone: '----', stoneName: 'غير مدخل' } 
-                });
-            }
-            
-            // الأب (اختياري)
-            if (father && father.trim() !== '') {
-                results.push({ 
-                    name: father, 
-                    type: 'الأب', 
-                    result: dualTaro.calculateSystem4Result(father) 
-                });
-            } else {
-                results.push({ 
-                    name: '----', 
-                    type: 'الأب', 
-                    result: { stone: '----', stoneName: 'غير مدخل' } 
-                });
-            }
-
-            // الحصول على النتيجة النهائية بناء على الترتيب
-            const finalSequence = results.map(person => person.result.stone).join('-');
-            const quranResult = getQuranResultBySequence(finalSequence);
-
-            let content = `
-                <div class="system4-results">
-                    <div class="stones-container">
-                        ${results.map(person => `
-                            <div class="stone-card">
-                                <div class="stone-name">${person.type}</div>
-                                <div class="stone-char">${person.result.stone}</div>
-                                <div class="stone-type">${person.name}</div>
-                                <div style="font-size: 0.8rem; margin-top: 8px; color: var(--text-color); opacity: 0.7;">
-                                    ${person.result.stoneName}
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    
-                    <div class="final-sequence">
-                        ${finalSequence.replace(/-/g, ' - ')}
-                    </div>
-                    
-                    ${quranResult ? `
-                        <div class="quran-result">
-                            <div class="quran-reference">${quranResult.reference}</div>
-                            <div class="quran-text">${quranResult.text}</div>
-                        </div>
-                    ` : `
-                        <div class="no-results">
-                            <p>لا توجد نتيجة قرآنية لهذا التسلسل</p>
-                        </div>
-                    `}
-                </div>
-            `;
-
-            container.innerHTML = content;
-        }
-
-        // دالة للحصول على النتيجة القرآنية بناء على التسلسل
-        function getQuranResultBySequence(sequence) {
-            const quranResults = {
-                '𐩱-𐩱-𐩱': { reference: 'المدثر 12', text: 'مَا سَلَكَكُمْ فِي سَقَرَ' },
-                '𐩱-𐩱-𐩨': { reference: 'المنافقون 5', text: 'وَإِذَا قِيلَ لَهُمْ تَعَالَوْا يَسْتَغْفِرْ لَكُمْ رَسُولُ اللَّهِ لَوَّوْا رُءُوسَهُمْ' },
-                '𐩱-𐩱-𐩴': { reference: 'آل عمران 170', text: 'فَرِحِينَ بِمَا آتَاهُمُ اللَّهُ مِن فَضْلِهِ' },
-                '𐩱-𐩱-𐩵': { reference: 'التوبة 51', text: 'قُل لَّن يُصِيبَنَا إِلَّا مَا كَتَبَ اللَّهُ لَنَا' },
-                '𐩱-𐩨-𐩱': { reference: 'آل عمران 30', text: 'يَوْمَ تَجِدُ كُلُّ نَفْسٍ مَّا عَمِلَتْ مِنْ خَيْرٍ مُّحْضَرًا' },
-                '𐩱-𐩨-𐩨': { reference: 'الحجر 45-46', text: 'إِنَّ الْمُتَّقِينَ فِي جَنَّاتٍ وَعُيُونٍ ادْخُلُوهَا بِسَلَامٍ آمِنِينَ' },
-                '𐩱-𐩨-𐩴': { reference: 'مريم 62', text: 'لَّا يَسْمَعُونَ فِيهَا لَغْوًا إِلَّا سَلَامًا' },
-                '𐩱-𐩨-𐩵': { reference: 'الطلاق 2-3', text: 'وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا وَيَرْزُقْهُ مِنْ حَيْثُ لَا يَحْتَسِبُ' },
-                '𐩱-𐩴-𐩱': { reference: 'الروم 46', text: 'وَمِنْ آيَاتِهِ أَن يُرْسِلَ الرِّيَاحَ مُبَشِّرَاتٍ' },
-                '𐩱-𐩴-𐩨': { reference: 'الأعراف 192-193', text: 'وَلَا يَسْتَطِيعُونَ لَهُمْ نَصْرًا وَلَا أَنفُسَهُمْ يَنصُرُونَ' },
-                '𐩱-𐩴-𐩴': { reference: 'فصلت 46 - آل عمران 120', text: 'مَنْ عَمِلَ صَالِحًا فَلِنَفْسِهِ وَمَنْ أَسَاءَ فَعَلَيْهَا' },
-                '𐩱-𐩴-𐩵': { reference: 'آل عمران 103', text: 'وَاعْتَصِمُوا بِحَبْلِ اللَّهِ جَمِيعًا وَلَا تَفَرَّقُوا' },
-                '𐩱-𐩵-𐩱': { reference: 'المائدة 90', text: 'يَا أَيُّهَا الَّذِينَ آمَنُوا إِنَّمَا الْخَمْرُ وَالْمَيْسِرُ وَالْأَنصَابُ وَالْأَزْلَامُ رِجْسٌ مِّنْ عَمَلِ الشَّيْطَانِ' },
-                '𐩱-𐩵-𐩨': { reference: 'آل عمران 13', text: 'قَدْ كَانَ لَكُمْ آيَةٌ فِي فِئَتَيْنِ الْتَقَتَا' },
-                '𐩱-𐩵-𐩴': { reference: 'البقرة 208', text: 'يَا أَيُّهَا الَّذِينَ آمَنُوا ادْخُلُوا فِي السِّلْمِ كَافَّةً' },
-                '𐩱-𐩵-𐩵': { reference: 'النساء 71', text: 'يَا أَيُّهَا الَّذِينَ آمَنُوا خُذُوا حِذْرَكُمْ' },
-                '𐩨-𐩱-𐩱': { reference: 'لقمان 20', text: 'أَلَمْ تَرَوْا أَنَّ اللَّهَ سَخَّرَ لَكُم مَّا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ' },
-                '𐩨-𐩱-𐩨': { reference: 'النور 38', text: 'لِيَجْزِيَهُمُ اللَّهُ أَحْسَنَ مَا عَمِلُوا وَيَزِيدَهُم مِّن فَضْلِهِ' },
-                '𐩨-𐩱-𐩴': { reference: 'المائدة 23', text: 'قَالَ رَجُلَانِ مِنَ الَّذِينَ يَخَافُونَ أَنْعَمَ اللَّهُ عَلَيْهِمَا' },
-                '𐩨-𐩱-𐩵': { reference: 'الأنبياء 76', text: 'وَنُوحًا إِذْ نَادَىٰ مِن قَبْلُ فَاسْتَجَبْنَا لَهُ فَنَجَّيْنَاهُ وَأَهْلَهُ مِنَ الْكَرْبِ الْعَظِيمِ' },
-                '𐩨-𐩨-𐩱': { reference: 'ق 34-35', text: 'ادْخُلُوهَا بِسَلَامٍ ذَٰلِكَ يَوْمُ الْخُلُودِ لَهُم مَّا يَشَاءُونَ فِيهَا وَلَدَيْنَا مَزِيدٌ' },
-                '𐩨-𐩨-𐩨': { reference: 'المائدة 3', text: 'الْيَوْمَ أَكْمَلْتُ لَكُمْ دِينَكُمْ وَأَتْمَمْتُ عَلَيْكُمْ نِعْمَتِي' },
-                '𐩨-𐩨-𐩴': { reference: 'الإسراء 82 - يونس 57 - التوبة 14 - الشعراء 80', text: 'وَنُنَزِّلُ مِنَ الْقُرْآنِ مَا هُوَ شِفَاءٌ وَرَحْمَةٌ لِّلْمُؤْمِنِينَ' },
-                '𐩨-𐩨-𐩵': { reference: 'الأنفال 66', text: 'الْآنَ خَفَّفَ اللَّهُ عَنكُمْ وَعَلِمَ أَنَّ فِيكُمْ ضَعفًا' },
-                '𐩨-𐩴-𐩱': { reference: 'الحديد 20', text: 'اعْلَمُوا أَنَّمَا الْحَيَاةُ الدُّنْيَا لَعِبٌ وَلَهْوٌ وَزِينَةٌ وَتَفَاخُرٌ بَيْنَكُمْ' },
-                '𐩨-𐩴-𐩨': { reference: 'لقمان 27', text: 'وَلَوْ أَنَّمَا فِي الْأَرْضِ مِن شَجَرَةٍ أَقْلَامٌ وَالْبَحْرُ يَمُدُّهُ مِن بَعْدِهِ سَبْعَةُ أَبْحُرٍ مَّا نَفِدَتْ كَلِمَاتُ اللَّهِ' },
-                '𐩨-𐩴-𐩴': { reference: 'التوبة 188', text: 'لِيَجْزِيَ اللَّهُ كُلَّ نَفْسٍ مَّا كَسَبَتْ' },
-                '𐩨-𐩴-𐩵': { reference: 'الأحقاف 35', text: 'فَاصْبِرْ كَمَا صَبَرَ أُولُو الْعَزْمِ مِنَ الرُّسُلِ' },
-                '𐩨-𐩵-𐩱': { reference: 'يوسف 24', text: 'وَلَقَدْ هَمَّتْ بِهِ وَهَمَّ بِهَا لَوْلَا أَن رَّأَىٰ بُرْهَانَ رَبِّهِ' },
-                '𐩨-𐩵-𐩨': { reference: 'الطلاق 9', text: 'فَاتَّقُوا اللَّهَ يَا أُولِي الْأَلْبَابِ لَعَلَّكُمْ تُفْلِحُونَ' },
-                '𐩨-𐩵-𐩴': { reference: 'الحج 65', text: 'أَلَمْ تَرَ أَنَّ اللَّهَ سَخَّرَ لَكُم مَّا فِي الْأَرْضِ' },
-                '𐩨-𐩵-𐩵': { reference: 'الكهف 110', text: 'فَمَن كَانَ يَرْجُو لِقَاءَ رَبِّهِ فَلْيَعْمَلْ عَمَلًا صَالِحًا وَلَا يُشْرِكْ بِعِبَادَةِ رَبِّهِ أَحدًا' },
-                '𐩴-𐩱-𐩱': { reference: 'النور 55 - طه 77', text: 'وَعَدَ اللَّهُ الَّذِينَ آمَنُوا مِنكُمْ وَعَمِلُوا الصَّالِحَاتِ لَيَسْتَخْلِفَنَّهُمْ فِي الْأَرْضِ' },
-                '𐩴-𐩱-𐩨': { reference: 'النور 38 - الروم 32', text: 'لِيَجْزِيَهُمُ اللَّهُ أَحْسَنَ مَا عَمِلُوا وَيَزِيدَهُم مِّن فَضْلِهِ' },
-                '𐩴-𐩱-𐩴': { reference: 'يوسف 87', text: 'وَلَا تَيْأَسُوا مِن رَّوْحِ اللَّهِ ۖ إِنَّهُ لَا يَيْأَسُ مِن رَّوْحِ اللَّهِ إِلَّا الْقَوْمُ الْكَافِرُونَ' },
-                '𐩴-𐩱-𐩵': { reference: 'الأحزاب 25', text: 'وَرَدَّ اللَّهُ الَّذِينَ كَفَرُوا بِغَيْظِهِمْ لَمْ يَنَالُوا خَيْرًا' },
-                '𐩴-𐩨-𐩱': { reference: 'البقرة 17', text: 'مَثَلُهُمْ كَمَثَلِ الَّذِي اسْتَوْقَدَ نَارًا فَلَمَّا أَضَاءَتْ مَا حَوْلَهُ ذَهَبَ اللَّهُ بِنُورِهِمْ' },
-                '𐩴-𐩨-𐩨': { reference: 'القمر 11-14', text: 'فَفَتَحْنَا أَبْوَابَ السَّمَاءِ بِمَاءٍ مُّنْهَمِرٍ' },
-                '𐩴-𐩨-𐩴': { reference: 'الزخرف 11 - النحل 11', text: 'وَالَّذِي نَزَّلَ مِنَ السَّمَاءِ مَاءً بِقَدَرٍ' },
-                '𐩴-𐩨-𐩵': { reference: 'البقرة 286 - الطلاق 7', text: 'لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا' },
-                '𐩴-𐩴-𐩱': { reference: 'الزمر 10', text: 'قُلْ يَا عِبَادِ الَّذِينَ آمَنُوا اتَّقُوا رَبَّكُمْ ۚ لِلَّذِينَ أَحسَنُوا فِي هَٰذِهِ الدُّنْيَا حَسَنَةٌ' },
-                '𐩴-𐩴-𐩨': { reference: 'طه 97', text: 'قَالَ فَاذْهَبْ فَإِنَّ لَكَ فِي الْحَيَاةِ أَن تَقُولَ لَا مِسَاسَ' },
-                '𐩴-𐩴-𐩴': { reference: 'يونس 58', text: 'قُلْ بِفَضْلِ اللَّهِ وَبِرَحْمَتِهِ فَبِذَٰلِكَ فَلْيَفْرَحُوا' },
-                '𐩴-𐩴-𐩵': { reference: 'النحل 37', text: 'إِن تَحْرِصْ عَلَىٰ هُدَاهُمْ فَإِنَّ اللَّهَ لَا يَهْدِي مَن يُضِلُّ' },
-                '𐩴-𐩵-𐩱': { reference: 'إبراهيم 7', text: 'وَإِذْ تَأَذَّنَ رَبُّكُمْ لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ' },
-                '𐩴-𐩵-𐩨': { reference: 'التوبة 80', text: 'اسْتَغْفِرْ لَهُمْ أَوْ لَا تَسْتَغْفِرْ لَهُمْ إِن تَسْتَغْفِرْ لَهُمْ سَبْعِينَ مَرَّةً فَلَن يَغْفِرَ اللَّهُ لَهُمْ' },
-                '𐩴-𐩵-𐩴': { reference: 'إبراهيم 21', text: 'وَبَرَزُوا لِلَّهِ جَمِيعًا فَقَالَ الضُّعَفَاءُ لِلَّذِينَ اسْتَكْبَرُوا إِنَّا كُنَّا لَكُمْ تَبَعًا' },
-                '𐩴-𐩵-𐩵': { reference: 'الأنبياء 103', text: 'لَا يَحْزُنُهُمُ الْفَزَعُ الْأَكْبَرُ وَتَتَلَقَّاهُمُ الْمَلَائِكَةُ هَٰذَا يَوْمُكُمُ الَّذِي كُنتُمْ تُوعَدُونَ' },
-                '𐩵-𐩱-𐩱': { reference: 'ص 26', text: 'وَمَا خَلَقْنَا السَّمَاءَ وَالْأَرْضَ وَمَا بَيْنَهُمَا بَاطِلًا' },
-                '𐩵-𐩱-𐩨': { reference: 'الصافات 143', text: 'فَلَوْلَا أَنَّهُ كَانَ مِنَ الْمُسَبِّحِينَ' },
-                '𐩵-𐩱-𐩴': { reference: 'يوسف 101 - غافر 44', text: 'فَاطِرَ السَّمَاوَاتِ وَالْأَرْضِ أَنتَ وَلِيِّي فِي الدُّنْيَا وَالْآخِرَةِ' },
-                '𐩵-𐩱-𐩵': { reference: 'هود 123', text: 'وَلِلَّهِ غَيْبُ السَّمَاوَاتِ وَالْأَرْضِ وَإِلَيْهِ يُرْجَعُ الْأَمْرُ كُلُّهُ' },
-                '𐩵-𐩨-𐩱': { reference: 'القمر 11', text: 'فَفَتَحْنَا أَبْوَابَ السَّمَاءِ بِمَاءٍ مُّنْهَمِرٍ' },
-                '𐩵-𐩨-𐩨': { reference: 'يونس 23', text: 'فَلَمَّا أَنْجَاهُمْ إِذَا هُمْ يَبْغُونَ فِي الْأَرْضِ بِغَيْرِ الْحَقِّ' },
-                '𐩵-𐩨-𐩴': { reference: 'الحشر 22', text: 'هُوَ اللَّهُ الَّذِي لَا إِلَٰهَ إِلَّا هُوَ ۖ عَالِمُ الْغَيْبِ وَالشَّهَادَةِ' },
-                '𐩵-𐩨-𐩵': { reference: 'الأنفال 19', text: 'إِن تَسْتَفْتِحُوا فَقَدْ جَاءَكُمُ الْفَتْحُ' },
-                '𐩵-𐩴-𐩱': { reference: 'الحديد 20', text: 'اعْلَمُوا أَنَّمَا الْحَيَاةُ الدُّنْيَا لَعِبٌ وَلَهْوٌ وَزِينَةٌ وَتَفَاخُرٌ بَيْنَكُمْ' },
-                '𐩵-𐩴-𐩨': { reference: 'المنافقون 9', text: 'يَا أَيُّهَا الَّذِينَ آمَنُوا لَا تُلْهِكُمْ أَمْوَالُكُمْ وَلَا أَوْلَادُكُمْ عَن ذِكْرِ اللَّهِ' },
-                '𐩵-𐩴-𐩴': { reference: 'الحديد 25', text: 'لَقَدْ أَرْسَلْنَا رُسُلَنَا بِالْبَيِّنَاتِ وَأَنزَلْنَا مَعَهُمُ الْكِتَابَ وَالْمِيزانَ' },
-                '𐩵-𐩴-𐩵': { reference: 'يونس 57', text: 'يَا أَيُّهَا النَّاسُ قَدْ جَاءَتْكُم مَّوْعِظَةٌ مِّن رَّبِّكُمْ وَشِفَاءٌ لِّمَا فِي الصُّدُورِ' },
-                '𐩵-𐩵-𐩱': { reference: 'لقمان 7 - البقرة 286', text: 'وَإِذَا تُتْلَىٰ عَلَيْهِ آيَاتُنَا وَلَّىٰ مُسْتَكْبِرًا كَأَن لَّمْ يَسْمَعْهَا' },
-                '𐩵-𐩵-𐩨': { reference: 'آل عمران 160 - الفتح 5', text: 'إِن يَنصُرْكُمُ اللَّهُ فَلَا غَالِبَ لَكُمْ' },
-                '𐩵-𐩵-𐩴': { reference: 'الكهف 157', text: 'وَإِذَا قِيلَ لَهُمُ اتَّبِعُوا مَا أَنزَلَ اللَّهُ قَالُوا بَلْ نَتَّبِعُ مَا وَجَدْنَا عَلَيْهِ آبَاءَنَا' },
-                '𐩵-𐩵-𐩵': { reference: 'الروم 4-5', text: 'فِي بِضْعِ سِنِينَ ۗ لِلَّهِ الْأَمْرُ مِن قَبْلُ وَمِن بَعْدُ ۚ وَيَوْمَئِذٍ يَفْرَحُ الْمُؤْمِنُونَ' }
-            };
-
-            return quranResults[sequence] || null;
-        }
-
-        function showZodiacAnalysis(student, studentBirth, target, targetBirth) {
-            const container = document.getElementById('zodiacContent');
-            
-            if (!student) {
-                container.innerHTML = `
-                    <div class="no-results">
-                        <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 15px; color: var(--danger-color);"></i>
-                        <h3>أدخل اسم الطالب على الأقل</h3>
-                    </div>
-                `;
-                return;
-            }
-
-            const studentSign = dualTaro.getZodiacSign(studentBirth);
-            const studentZodiacData = studentSign ? dualTaro.zodiacData[studentSign] : null;
-
-            const targetSign = dualTaro.getZodiacSign(targetBirth);
-            const targetZodiacData = targetSign ? dualTaro.zodiacData[targetSign] : null;
-
-            const compatibility = targetSign ? dualTaro.getZodiacCompatibility(studentSign, targetSign) : "غير محدد";
-
-            let content = `
-                <div class="zodiac-grid">
-                    <div class="zodiac-card">
-                        <div class="zodiac-person">الطالب: ${student}</div>
-                        ${studentSign ? `
-                            <div class="zodiac-details">
-                                <div class="zodiac-detail">
-                                    <span class="zodiac-label">البرج</span>
-                                    <span class="zodiac-value">${studentSign}</span>
-                                </div>
-                                <div class="zodiac-detail">
-                                    <span class="zodiac-label">الكوكب</span>
-                                    <span class="zodiac-value">${studentZodiacData.planet}</span>
-                                </div>
-                                <div class="zodiac-detail">
-                                    <span class="zodiac-label">المعدن</span>
-                                    <span class="zodiac-value">${studentZodiacData.metal}</span>
-                                </div>
-                                <div class="zodiac-detail">
-                                    <span class="zodiac-label">اليوم</span>
-                                    <span class="zodiac-value">${studentZodiacData.day}</span>
-                                </div>
-                            </div>
-                        ` : `
-                            <div class="no-results" style="padding: 20px;">
-                                <p>أدخل تاريخ ميلاد الطالب</p>
-                            </div>
-                        `}
-                    </div>
-                    
-                    <div class="zodiac-card">
-                        <div class="zodiac-person">${target ? `المطلوب: ${target}` : 'المطلوب: غير محدد'}</div>
-                        ${targetSign ? `
-                            <div class="zodiac-details">
-                                <div class="zodiac-detail">
-                                    <span class="zodiac-label">البرج</span>
-                                    <span class="zodiac-value">${targetSign}</span>
-                                </div>
-                                <div class="zodiac-detail">
-                                    <span class="zodiac-label">الكوكب</span>
-                                    <span class="zodiac-value">${targetZodiacData.planet}</span>
-                                </div>
-                                <div class="zodiac-detail">
-                                    <span class="zodiac-label">المعدن</span>
-                                    <span class="zodiac-value">${targetZodiacData.metal}</span>
-                                </div>
-                                <div class="zodiac-detail">
-                                    <span class="zodiac-label">اليوم</span>
-                                    <span class="zodiac-value">${targetZodiacData.day}</span>
-                                </div>
-                            </div>
-                        ` : `
-                            <div class="no-results" style="padding: 20px;">
-                                <p>${target ? 'أدخل تاريخ ميلاد المطلوب' : 'أدخل بيانات المطلوب'}</p>
-                            </div>
-                        `}
-                    </div>
-                </div>
-                
-                ${studentSign && targetSign ? `
-                    <div class="compatibility-result">
-                        <div class="compatibility-title">تحليل التوافق بين البرجين</div>
-                        <div class="compatibility-text">
-                            ${compatibility}
-                        </div>
-                    </div>
-                ` : ''}
-            `;
-
-            container.innerHTML = content;
-        }
-
-        function showDominanceAnalysis(student, target) {
-            const container = document.getElementById('dominanceContent');
-            
-            if (!student || !target) {
-                container.innerHTML = `
-                    <div class="no-results">
-                        <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 15px; color: var(--danger-color);"></i>
-                        <h3>${!student ? 'أدخل اسم الطالب' : 'أدخل اسم المطلوب'} لعرض نتائج الحلبة</h3>
-                    </div>
-                `;
-                return;
-            }
-
-            const studentDual = dualTaro.calculateNameDual(student);
-            const targetDual = dualTaro.calculateNameDual(target);
-            const dominanceResult = dualTaro.calculateDominance(studentDual.large.sum, targetDual.large.sum);
-            
-            if (!dominanceResult) {
-                container.innerHTML = `
-                    <div class="no-results">
-                        <p>لا توجد نتائج للحلبة</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const studentClass = dominanceResult.studentStatus === 'غالب' ? 'winner' : 'loser';
-            const targetClass = dominanceResult.targetStatus === 'غالب' ? 'winner' : 'loser';
-            const studentStatusClass = dominanceResult.studentStatus === 'غالب' ? 'status-dominant' : 'status-dominated';
-            const targetStatusClass = dominanceResult.targetStatus === 'غالب' ? 'status-dominant' : 'status-dominated';
-
-            const content = `
-                <div class="dominance-grid">
-                    <div class="dominance-player ${studentClass}">
-                        <div class="player-role">الطالب</div>
-                        <div class="player-name">${student}</div>
-                        <div class="player-number">${dominanceResult.studentNumber}</div>
-                        <div class="player-status ${studentStatusClass}">
-                            ${dominanceResult.studentStatus}
-                        </div>
-                    </div>
-                    
-                    <div class="dominance-player ${targetClass}">
-                        <div class="player-role">المطلوب</div>
-                        <div class="player-name">${target}</div>
-                        <div class="player-number">${dominanceResult.targetNumber}</div>
-                        <div class="player-status ${targetStatusClass}">
-                            ${dominanceResult.targetStatus}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="dominance-final">
-                    <div class="final-result">${dominanceResult.dominant} يغلب</div>
-                    <div class="final-description">${dominanceResult.description}</div>
-                </div>
-            `;
-
-            container.innerHTML = content;
-        }
-
-        function createCompatibilityCard(title, result, totalPercent) {
-            // حساب النسب الثلاثية
-            const normalized9 = (result.mod9.percent * 0.66).toFixed(1);
-            const normalized8 = (result.mod8.percent * 0.66).toFixed(1);
-            const system5Percent = result.mod5.percent;
-            
-            const threeDTotal = (parseFloat(normalized9) + parseFloat(normalized8) + system5Percent).toFixed(1);
-
-            return `
-                <div class="result-card">
-                    <div class="result-header">
-                        <div class="result-title">${title}</div>
-                        <div class="result-percentage">
-                            <div>${totalPercent.toFixed(1)}% <span class="comparison-badge">ثنائي</span></div>
-                            <div>${threeDTotal}% <span class="comparison-badge">ثلاثي</span></div>
-                        </div>
-                    </div>
-                    
-                    <div class="systems-grid">
-                        <div class="system-item">
-                            <div class="system-value">${result.mod9Value}</div>
-                            <div class="system-label">نظام 9</div>
-                            <div class="system-percentage">${result.mod9.percent}% → ${normalized9}%</div>
-                        </div>
-                        
-                        <div class="system-item">
-                            <div class="system-value">${result.mod8Value}</div>
-                            <div class="system-label">نظام 8</div>
-                            <div class="system-percentage">${result.mod8.percent}% → ${normalized8}%</div>
-                        </div>
-                        
-                        <div class="system-item">
-                            <div class="system-value">${result.mod5Value}</div>
-                            <div class="system-label">نظام 5</div>
-                            <div class="system-percentage">${system5Percent}%</div>
-                            <div class="system-status ${result.mod5.meets ? 'status-success' : 'status-danger'}">
-                                ${result.mod5.meets ? 'يجتمعان' : 'لا يجتمعان'}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="result-description">
-                        <strong>نظام 9:</strong> ${result.mod9.text}<br>
-                        <strong>نظام 8:</strong> ${result.mod8.text}<br>
-                        <strong>نظام 5:</strong> ${result.mod5.text}<br>
-                        <strong>المجموع الثلاثي:</strong> ${threeDTotal}%
-                    </div>
-                </div>
-            `;
-        }
-
-        function showCompatibilityResults(student, mother, father, target, targetMother, targetFather) {
-            const studentDual = dualTaro.calculateNameDual(student);
-            const motherDual = dualTaro.calculateNameDual(mother);
-            const fatherDual = dualTaro.calculateNameDual(father);
-            const targetDual = dualTaro.calculateNameDual(target);
-            const targetMotherDual = dualTaro.calculateNameDual(targetMother);
-            const targetFatherDual = dualTaro.calculateNameDual(targetFather);
-
-            const largeContainer = document.getElementById('largeCompatibilityResults');
-            const smallContainer = document.getElementById('smallCompatibilityResults');
-            
-            const combinations = [
-                {
-                    title: "أصــــــل التـــوافـق",
-                    result: dualTaro.calculateCompatibility(
-                        studentDual.large.sum, studentDual.small.sum, 0, 0, 0, 0,
-                        targetDual.large.sum, targetDual.small.sum, 0, 0, 0, 0
-                    )
-                },
-                {
-                    title: "بـــاب الـام",
-                    result: dualTaro.calculateCompatibility(
-                        studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, 0, 0,
-                        targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, 0, 0
-                    )
-                },
-                {
-                    title: "بـــاب الـاب ",
-                    result: dualTaro.calculateCompatibility(
-                        studentDual.large.sum, studentDual.small.sum, 0, 0, fatherDual.large.sum, fatherDual.small.sum,
-                        targetDual.large.sum, targetDual.small.sum, 0, 0, targetFatherDual.large.sum, targetFatherDual.small.sum
-                    )
-                },
-                {
-                    title: "الـــوالدين",
-                    result: dualTaro.calculateCompatibility(
-                        studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, fatherDual.large.sum, fatherDual.small.sum,
-                        targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, targetFatherDual.large.sum, targetFatherDual.small.sum
-                    )
-                }
-            ];
-
-            largeContainer.innerHTML = combinations.map(combo => {
-                const totalPercent = (combo.result.large.mod9.percent + combo.result.large.mod8.percent);
-                return createCompatibilityCard(combo.title, combo.result.large, totalPercent);
-            }).join('');
-
-            smallContainer.innerHTML = combinations.map(combo => {
-                const totalPercent = (combo.result.small.mod9.percent + combo.result.small.mod8.percent);
-                return createCompatibilityCard(combo.title, combo.result.small, totalPercent);
-            }).join('');
-        }
-
-        function showCompatibilityNoTarget() {
-            const largeContainer = document.getElementById('largeCompatibilityResults');
-            const smallContainer = document.getElementById('smallCompatibilityResults');
-            
-            const message = `
-                <div class="no-results">
-                    <i class="fas fa-info-circle" style="font-size: 3rem; margin-bottom: 15px; color: var(--info-color);"></i>
-                    <h3>بيانات غير كافية</h3>
-                    <p>أدخل اسم المطلوب لعرض تحليل التوافق</p>
-                </div>
-            `;
-            
-            largeContainer.innerHTML = message;
-            smallContainer.innerHTML = message;
-        }
-
-        function calculateAndDisplayAllEnergyResults(student, mother, father) {
-            const studentDual = dualTaro.calculateNameDual(student);
-            const motherDual = dualTaro.calculateNameDual(mother);
-            const fatherDual = dualTaro.calculateNameDual(father);
-
-            // عرض نتائج الطاقة لجميع المجموعات
-            displayEnergyResults('student-mother-days-results', studentDual, motherDual, null, false);
-            displayEnergyResults('student-father-days-results', studentDual, null, fatherDual, false);
-            displayEnergyResults('student-parents-days-results', studentDual, motherDual, fatherDual, false);
-            
-            displayEnergyResults('student-mother-months-results', studentDual, motherDual, null, true);
-            displayEnergyResults('student-father-months-results', studentDual, null, fatherDual, true);
-            displayEnergyResults('student-parents-months-results', studentDual, motherDual, fatherDual, true);
-        }
-
-        function displayEnergyResults(containerId, studentDual, motherDual, fatherDual, isMonth) {
-            const container = document.getElementById(containerId);
-            const results = [];
-            const times = isMonth ? dualTaro.months : dualTaro.days;
-
-            times.forEach(time => {
-                const energy = dualTaro.calculateEnergy(
-                    studentDual.large.sum, studentDual.small.sum,
-                    motherDual ? motherDual.large.sum : 0, motherDual ? motherDual.small.sum : 0,
-                    fatherDual ? fatherDual.large.sum : 0, fatherDual ? fatherDual.small.sum : 0,
-                    time.value, isMonth
-                );
-                
-                const energyData = isMonth ? energy.small : energy.large;
-                results.push({
-                    ...energyData,
-                    timeType: isMonth ? 'شهر' : 'يوم',
-                    fullTimeName: time.name,
-                    order: time.order
-                });
-            });
-
-            results.sort((a, b) => a.order - b.order);
-            
-            if (results.length === 0) {
-                container.innerHTML = `
-                    <div class="no-results">
-                        <p>لا توجد نتائج للطاقة</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = results.map(energy => `
-                <div class="energy-card">
-                    <div class="energy-header">
-                        <div class="energy-title">
-                            ${energy.fullTimeName}
-                            <span class="time-badge">
-                                ${energy.timeType} ${energy.order}
-                            </span>
-                        </div>
-                        <div class="energy-value">${energy.ratio.toFixed(1)}%</div>
-                    </div>
-                    <div class="energy-details">
-                        <div class="energy-detail">
-                            <span class="energy-label">نوع الطاقة</span>
-                            <span class="energy-text">${energy.energyType}</span>
-                        </div>
-                        <div class="energy-detail">
-                            <span class="energy-label">التأثير</span>
-                            <span class="energy-text">${energy.energyEffect}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function clearForm() {
-            document.getElementById('studentName').value = '';
-            document.getElementById('studentBirth').value = '';
-            document.getElementById('motherName').value = '';
-            document.getElementById('fatherName').value = '';
-            document.getElementById('targetName').value = '';
-            document.getElementById('targetBirth').value = '';
-            document.getElementById('targetMotherName').value = '';
-            document.getElementById('targetFatherName').value = '';
-            document.getElementById('resultsSection').style.display = 'none';
-        }
-
-        function loadSampleData() {
-            document.getElementById('studentName').value = 'شذى';
-            document.getElementById('studentBirth').value = '1991-12-10';
-            document.getElementById('motherName').value = 'مريم';
-            document.getElementById('fatherName').value = 'حسن';
-            document.getElementById('targetName').value = 'بوينص';
-            document.getElementById('targetBirth').value = '2000-10-10';
-            document.getElementById('targetMotherName').value = 'مريم ';
-            document.getElementById('targetFatherName').value = 'عبدالله ';
-        }
-
-        // أحداث الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            // الوضع الليلي
-            const themeToggle = document.getElementById('themeToggle');
-            const savedTheme = localStorage.getItem('theme');
-            
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i> وضع النهار';
-            }
-
-            themeToggle.addEventListener('click', function() {
-                document.body.classList.toggle('dark-mode');
-                if (document.body.classList.contains('dark-mode')) {
-                    localStorage.setItem('theme', 'dark');
-                    themeToggle.innerHTML = '<i class="fas fa-sun"></i> وضع النهار';
-                } else {
-                    localStorage.setItem('theme', 'light');
-                    themeToggle.innerHTML = '<i class="fas fa-moon"></i> وضع الليل';
-                }
-            });
-
-            // الأحداث الرئيسية
-            document.getElementById('calculateBtn').addEventListener('click', calculateAllResults);
-            document.getElementById('clearBtn').addEventListener('click', clearForm);
-            document.getElementById('sampleBtn').addEventListener('click', loadSampleData);
-
-            // أحداث الطي/الفتح للأقسام
-            document.querySelectorAll('.section-header').forEach(header => {
-                header.addEventListener('click', function() {
-                    const sectionId = this.getAttribute('data-section');
-                    const content = document.getElementById(sectionId + 'Content');
-                    const icon = this.querySelector('.fa-chevron-down, .fa-chevron-up');
-                    
-                    if (content.style.display === 'none' || !content.style.display) {
-                        content.style.display = 'block';
-                        icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
-                    } else {
-                        content.style.display = 'none';
-                        icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
-                    }
-                });
-            });
-
-            // التبويبات الرئيسية
-            document.querySelectorAll('.compatibility-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const systemId = this.getAttribute('data-system');
-                    const parent = this.closest('.section-content');
-                    
-                    parent.querySelectorAll('.compatibility-tab').forEach(t => t.classList.remove('active'));
-                    parent.querySelectorAll('.compatibility-content').forEach(c => c.classList.remove('active'));
-                    
-                    this.classList.add('active');
-                    document.getElementById(systemId + 'Compatibility').classList.add('active');
-                });
-            });
-
-            // تبويبات الطاقة
-            document.querySelectorAll('.energy-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const systemId = this.getAttribute('data-system');
-                    const parent = this.closest('.section-content');
-                    
-                    parent.querySelectorAll('.energy-tab').forEach(t => t.classList.remove('active'));
-                    parent.querySelectorAll('.energy-content').forEach(c => c.classList.remove('active'));
-                    
-                    this.classList.add('active');
-                    document.getElementById(systemId + 'Energy').classList.add('active');
-                });
-            });
-
-            // تبويبات المجموعات
-            document.querySelectorAll('.combination-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const combinationId = this.getAttribute('data-combination');
-                    const parent = this.closest('.energy-content');
-                    
-                    parent.querySelectorAll('.combination-tab').forEach(t => t.classList.remove('active'));
-                    parent.querySelectorAll('.combination-content').forEach(c => c.classList.remove('active'));
-                    
-                    this.classList.add('active');
-                    document.getElementById(combinationId + '-content').classList.add('active');
-                });
-            });
-
-            // تفعيل Enter
-            document.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') calculateAllResults();
-            });
-        });
-    </script>
+    <script src="systems.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
