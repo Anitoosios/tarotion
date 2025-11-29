@@ -9,274 +9,213 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- النجوم الخلفية -->
-    <div class="stars" id="stars"></div>
+    <div class="stars-background"></div>
 
     <div class="container">
-        <button class="theme-toggle" id="themeToggle">
-            <i class="fas fa-moon"></i> وضع الليل
-        </button>
-
         <div class="header">
-            <h1 class="logo floating">اللَّهُمَّ رَبَّنَا أَنزِلْ عَلَيْنَا مَائِدَةً مِّنَ السَّمَاءِ</h1>
+            <h1 class="logo">اللَّهُمَّ رَبَّنَا أَنزِلْ عَلَيْنَا مَائِدَةً مِّنَ السَّمَاءِ</h1>
             <p class="tagline">احـمد نــــاجي ابراهيـــم - التحليل الشامل</p>
         </div>
 
-        <div class="master-detail-layout">
-            <!-- القائمة الجانبية -->
-            <div class="sidebar">
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">التحليل الشامل</h3>
-                    <div class="nav-menu">
-                        <button class="nav-item active" data-target="input-data">
-                            <i class="fas fa-database"></i>
-                            <span>بيانات الإدخال</span>
-                        </button>
-                        <button class="nav-item" data-target="system4">
-                            <i class="fas fa-gem"></i>
-                            <span>نظام القرعة</span>
-                        </button>
-                        <button class="nav-item" data-target="zodiac">
-                            <i class="fas fa-star"></i>
-                            <span>تحليل الإبراج</span>
-                        </button>
-                        <button class="nav-item" data-target="dominance">
-                            <i class="fas fa-trophy"></i>
-                            <span>تحليل الحلبة</span>
-                        </button>
-                        <button class="nav-item" data-target="compatibility">
-                            <i class="fas fa-tree"></i>
-                            <span>شجرة التوافق</span>
-                        </button>
-                        <button class="nav-item" data-target="energy">
-                            <i class="fas fa-bolt"></i>
-                            <span>شجرة الطاقة</span>
-                        </button>
+        <!-- تنقل بسيط وعملي -->
+        <nav class="main-nav">
+            <button class="nav-btn active" data-target="input-data">
+                <i class="fas fa-database"></i>
+                <span>البيانات</span>
+            </button>
+            <button class="nav-btn" data-target="system4">
+                <i class="fas fa-gem"></i>
+                <span>القرعة</span>
+            </button>
+            <button class="nav-btn" data-target="zodiac">
+                <i class="fas fa-star"></i>
+                <span>الإبراج</span>
+            </button>
+            <button class="nav-btn" data-target="dominance">
+                <i class="fas fa-trophy"></i>
+                <span>الحلبة</span>
+            </button>
+            <button class="nav-btn" data-target="compatibility">
+                <i class="fas fa-tree"></i>
+                <span>التوافق</span>
+            </button>
+            <button class="nav-btn" data-target="energy">
+                <i class="fas fa-bolt"></i>
+                <span>الطاقة</span>
+            </button>
+        </nav>
+
+        <!-- المحتوى الرئيسي -->
+        <div class="main-content">
+            <!-- قسم بيانات الإدخال -->
+            <div class="content-section active" id="input-data">
+                <div class="input-cards">
+                    <div class="input-card">
+                        <div class="card-header">
+                            <i class="fas fa-user-graduate"></i>
+                            <h3>بطاقة الطالب</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="studentName" class="input-label required">
+                                    <i class="fas fa-signature"></i>
+                                    اسم الطالب
+                                </label>
+                                <input type="text" id="studentName" class="input-field" placeholder="أدخل اسم الطالب الكامل">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="studentBirth" class="input-label">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    مواليد الطالب
+                                </label>
+                                <input type="date" id="studentBirth" class="input-field">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="motherName" class="input-label">
+                                    <i class="fas fa-female"></i>
+                                    اسم الأم
+                                </label>
+                                <input type="text" id="motherName" class="input-field" placeholder="أدخل اسم الأم الكامل">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fatherName" class="input-label">
+                                    <i class="fas fa-male"></i>
+                                    اسم الأب
+                                </label>
+                                <input type="text" id="fatherName" class="input-field" placeholder="أدخل اسم الأب الكامل">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-card">
+                        <div class="card-header">
+                            <i class="fas fa-user-tie"></i>
+                            <h3>بطاقة المطلوب</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="targetName" class="input-label">
+                                    <i class="fas fa-signature"></i>
+                                    اسم المطلوب
+                                </label>
+                                <input type="text" id="targetName" class="input-field" placeholder="أدخل اسم المطلوب الكامل">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="targetBirth" class="input-label">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    مواليد المطلوب
+                                </label>
+                                <input type="date" id="targetBirth" class="input-field">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="targetMotherName" class="input-label">
+                                    <i class="fas fa-female"></i>
+                                    اسم أم المطلوب
+                                </label>
+                                <input type="text" id="targetMotherName" class="input-field" placeholder="أدخل اسم أم المطلوب">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="targetFatherName" class="input-label">
+                                    <i class="fas fa-male"></i>
+                                    اسم أب المطلوب
+                                </label>
+                                <input type="text" id="targetFatherName" class="input-field" placeholder="أدخل اسم أب المطلوب">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="sidebar-actions">
-                    <button class="btn btn-primary btn-block" id="calculateBtn">
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="calculateBtn">
                         <i class="fas fa-calculator"></i>
                         بدء التحليل
                     </button>
-                    <button class="btn btn-outline btn-block" id="clearBtn">
+                    <button class="btn btn-outline" id="clearBtn">
                         <i class="fas fa-eraser"></i>
                         مسح الكل
                     </button>
-                    <button class="btn btn-outline btn-block" id="sampleBtn">
+                    <button class="btn btn-outline" id="sampleBtn">
                         <i class="fas fa-vial"></i>
                         بيانات تجريبية
                     </button>
                 </div>
             </div>
 
-            <!-- المحتوى الرئيسي -->
-            <div class="main-content">
-                <!-- قسم بيانات الإدخال -->
-                <div class="content-section active" id="input-data">
-                    <div class="section-header">
-                        <h2><i class="fas fa-database"></i> بيانات الإدخال</h2>
-                        <p>أدخل المعلومات المطلوبة للتحليل الشامل</p>
-                    </div>
+            <!-- باقي الأقسام بنفس الهيكل -->
+            <div class="content-section" id="system4">
+                <div class="section-header">
+                    <h2><i class="fas fa-gem"></i> نظام القرعة</h2>
+                    <p>تحليل الأحجار والنتائج القرآنية</p>
+                </div>
+                <div class="results-content" id="system4Content"></div>
+            </div>
 
-                    <div class="input-cards">
-                        <div class="input-card">
-                            <div class="card-header">
-                                <i class="fas fa-user-graduate"></i>
-                                <h3>بطاقة الطالب</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label for="studentName" class="input-label required">
-                                        <i class="fas fa-signature"></i>
-                                        اسم الطالب
-                                    </label>
-                                    <input type="text" id="studentName" class="input-field" placeholder="أدخل اسم الطالب الكامل">
-                                </div>
+            <div class="content-section" id="zodiac">
+                <div class="section-header">
+                    <h2><i class="fas fa-star"></i> تحليل الإبراج</h2>
+                    <p>التحليل الفلكي والتنبؤات</p>
+                </div>
+                <div class="results-content" id="zodiacContent"></div>
+            </div>
 
-                                <div class="form-group">
-                                    <label for="studentBirth" class="input-label">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        مواليد الطالب
-                                    </label>
-                                    <input type="date" id="studentBirth" class="input-field">
-                                </div>
+            <div class="content-section" id="dominance">
+                <div class="section-header">
+                    <h2><i class="fas fa-trophy"></i> تحليل الحلبة</h2>
+                    <p>تحليل الهيمنة والتفوق</p>
+                </div>
+                <div class="results-content" id="dominanceContent"></div>
+            </div>
 
-                                <div class="form-group">
-                                    <label for="motherName" class="input-label">
-                                        <i class="fas fa-female"></i>
-                                        اسم الأم
-                                    </label>
-                                    <input type="text" id="motherName" class="input-field" placeholder="أدخل اسم الأم الكامل">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="fatherName" class="input-label">
-                                        <i class="fas fa-male"></i>
-                                        اسم الأب
-                                    </label>
-                                    <input type="text" id="fatherName" class="input-field" placeholder="أدخل اسم الأب الكامل">
-                                </div>
-                            </div>
+            <div class="content-section" id="compatibility">
+                <div class="section-header">
+                    <h2><i class="fas fa-tree"></i> شجرة التوافق</h2>
+                    <p>تحليل التوافق والتناغم</p>
+                </div>
+                <div class="results-content" id="compatibilityContent">
+                    <div class="compatibility-grid">
+                        <div class="compatibility-column">
+                            <h3><i class="fas fa-text-height"></i> الجمل الكبير</h3>
+                            <div id="largeCompatibilityResults"></div>
                         </div>
-
-                        <div class="input-card">
-                            <div class="card-header">
-                                <i class="fas fa-user-tie"></i>
-                                <h3>بطاقة المطلوب</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label for="targetName" class="input-label">
-                                        <i class="fas fa-signature"></i>
-                                        اسم المطلوب
-                                    </label>
-                                    <input type="text" id="targetName" class="input-field" placeholder="أدخل اسم المطلوب الكامل">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="targetBirth" class="input-label">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        مواليد المطلوب
-                                    </label>
-                                    <input type="date" id="targetBirth" class="input-field">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="targetMotherName" class="input-label">
-                                        <i class="fas fa-female"></i>
-                                        اسم أم المطلوب
-                                    </label>
-                                    <input type="text" id="targetMotherName" class="input-field" placeholder="أدخل اسم أم المطلوب">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="targetFatherName" class="input-label">
-                                        <i class="fas fa-male"></i>
-                                        اسم أب المطلوب
-                                    </label>
-                                    <input type="text" id="targetFatherName" class="input-field" placeholder="أدخل اسم أب المطلوب">
-                                </div>
-                            </div>
+                        <div class="compatibility-column">
+                            <h3><i class="fas fa-text-width"></i> الجمل الصغير</h3>
+                            <div id="smallCompatibilityResults"></div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- قسم نظام القرعة -->
-                <div class="content-section" id="system4">
-                    <div class="section-header">
-                        <h2><i class="fas fa-gem"></i> نظام القرعة</h2>
-                        <p>تحليل الأحجار والنتائج القرآنية</p>
-                    </div>
-                    <div class="results-content" id="system4Content">
-                        <!-- سيتم تعبئتها بالبيانات -->
-                    </div>
+            <div class="content-section" id="energy">
+                <div class="section-header">
+                    <h2><i class="fas fa-bolt"></i> شجرة الطاقة</h2>
+                    <p>تحليل الطاقة والتوقيتات</p>
                 </div>
-
-                <!-- قسم الإبراج -->
-                <div class="content-section" id="zodiac">
-                    <div class="section-header">
-                        <h2><i class="fas fa-star"></i> تحليل الإبراج</h2>
-                        <p>التحليل الفلكي والتنبؤات</p>
+                <div class="results-content" id="energyContent">
+                    <div class="energy-tabs">
+                        <button class="energy-tab active" data-type="days">تحليل الأيام</button>
+                        <button class="energy-tab" data-type="months">تحليل الأشهر</button>
                     </div>
-                    <div class="results-content" id="zodiacContent">
-                        <!-- سيتم تعبئتها بالبيانات -->
-                    </div>
-                </div>
-
-                <!-- قسم الحلبة -->
-                <div class="content-section" id="dominance">
-                    <div class="section-header">
-                        <h2><i class="fas fa-trophy"></i> تحليل الحلبة</h2>
-                        <p>تحليل الهيمنة والتفوق</p>
-                    </div>
-                    <div class="results-content" id="dominanceContent">
-                        <!-- سيتم تعبئتها بالبيانات -->
-                    </div>
-                </div>
-
-                <!-- قسم شجرة التوافق -->
-                <div class="content-section" id="compatibility">
-                    <div class="section-header">
-                        <h2><i class="fas fa-tree"></i> شجرة التوافق</h2>
-                        <p>تحليل التوافق والتناغم - عرض موازي</p>
-                    </div>
-                    <div class="results-content" id="compatibilityContent">
-                        <div class="parallel-compatibility">
-                            <div class="compatibility-column">
-                                <div class="column-header">
-                                    <i class="fas fa-text-height"></i>
-                                    <h3>الجمل الكبير</h3>
-                                </div>
-                                <div class="compatibility-results" id="largeCompatibilityResults">
-                                    <!-- سيتم تعبئتها بالبيانات -->
-                                </div>
-                            </div>
-                            
-                            <div class="compatibility-column">
-                                <div class="column-header">
-                                    <i class="fas fa-text-width"></i>
-                                    <h3>الجمل الصغير</h3>
-                                </div>
-                                <div class="compatibility-results" id="smallCompatibilityResults">
-                                    <!-- سيتم تعبئتها بالبيانات -->
-                                </div>
-                            </div>
+                    
+                    <div class="energy-results">
+                        <div class="energy-section">
+                            <h3><i class="fas fa-female"></i> الطالب مع الأم</h3>
+                            <div class="energy-grid" id="motherEnergyResults"></div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- قسم شجرة الطاقة -->
-                <div class="content-section" id="energy">
-                    <div class="section-header">
-                        <h2><i class="fas fa-bolt"></i> شجرة الطاقة</h2>
-                        <p>تحليل الطاقة والتوقيتات</p>
-                    </div>
-                    <div class="results-content" id="energyContent">
-                        <div class="energy-tabs">
-                            <button class="energy-tab active" data-system="days">تحليل الأيام</button>
-                            <button class="energy-tab" data-system="months">تحليل الأشهر</button>
+                        
+                        <div class="energy-section">
+                            <h3><i class="fas fa-male"></i> الطالب مع الأب</h3>
+                            <div class="energy-grid" id="fatherEnergyResults"></div>
                         </div>
-
-                        <div class="energy-content active" id="daysEnergy">
-                            <div class="combination-tabs">
-                                <button class="combination-tab active" data-combination="student-mother-days">الطالب مع الأم</button>
-                                <button class="combination-tab" data-combination="student-father-days">الطالب مع الأب</button>
-                                <button class="combination-tab" data-combination="student-parents-days">الطالب مع الوالدين</button>
-                            </div>
-
-                            <div class="combination-content active" id="student-mother-days-content">
-                                <div class="energy-grid" id="student-mother-days-results"></div>
-                            </div>
-
-                            <div class="combination-content" id="student-father-days-content">
-                                <div class="energy-grid" id="student-father-days-results"></div>
-                            </div>
-
-                            <div class="combination-content" id="student-parents-days-content">
-                                <div class="energy-grid" id="student-parents-days-results"></div>
-                            </div>
-                        </div>
-
-                        <div class="energy-content" id="monthsEnergy">
-                            <div class="combination-tabs">
-                                <button class="combination-tab active" data-combination="student-mother-months">الطالب مع الأم</button>
-                                <button class="combination-tab" data-combination="student-father-months">الطالب مع الأب</button>
-                                <button class="combination-tab" data-combination="student-parents-months">الطالب مع الوالدين</button>
-                            </div>
-
-                            <div class="combination-content active" id="student-mother-months-content">
-                                <div class="energy-grid" id="student-mother-months-results"></div>
-                            </div>
-
-                            <div class="combination-content" id="student-father-months-content">
-                                <div class="energy-grid" id="student-father-months-results"></div>
-                            </div>
-
-                            <div class="combination-content" id="student-parents-months-content">
-                                <div class="energy-grid" id="student-parents-months-results"></div>
-                            </div>
+                        
+                        <div class="energy-section">
+                            <h3><i class="fas fa-users"></i> الطالب مع الوالدين</h3>
+                            <div class="energy-grid" id="parentsEnergyResults"></div>
                         </div>
                     </div>
                 </div>

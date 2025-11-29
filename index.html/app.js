@@ -1,52 +1,68 @@
-// ========== التطبيق الرئيسي مع التحسينات ==========
+// ========== التطبيق الرئيسي ==========
 const dualTaro = new DualTaroSystem();
 
-// إنشاء النجوم العشوائية
-function createStars() {
-    const starsContainer = document.getElementById('stars');
-    const starsCount = 150;
-    
-    for (let i = 0; i < starsCount; i++) {
-        const star = document.createElement('div');
-        star.classList.add('star');
-        
-        const size = Math.random() * 2;
-        const posX = Math.random() * 100;
-        const posY = Math.random() * 100;
-        const delay = Math.random() * 5;
-        
-        star.style.width = `${size}px`;
-        star.style.height = `${size}px`;
-        star.style.right = `${posX}%`;
-        star.style.top = `${posY}%`;
-        star.style.animationDelay = `${delay}s`;
-        
-        starsContainer.appendChild(star);
-    }
-}
-
-// إدارة التنقل بين الأقسام
+// إدارة التنقل
 function initNavigation() {
-    const navItems = document.querySelectorAll('.nav-item');
+    const navButtons = document.querySelectorAll('.nav-btn');
     const contentSections = document.querySelectorAll('.content-section');
 
-    navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const targetId = item.getAttribute('data-target');
+    navButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetId = button.getAttribute('data-target');
             
-            // إزالة النشاط من جميع العناصر
-            navItems.forEach(nav => nav.classList.remove('active'));
+            // إزالة النشاط من جميع الأزرار والأقسام
+            navButtons.forEach(btn => btn.classList.remove('active'));
             contentSections.forEach(section => section.classList.remove('active'));
             
-            // إضافة النشاط للعنصر الحالي
-            item.classList.add('active');
+            // إضافة النشاط للزر والقسم الحالي
+            button.classList.add('active');
             document.getElementById(targetId).classList.add('active');
         });
     });
 }
 
-// 🔧 تحسين: دالة لعرض الإشعارات
+// إدارة تبويبات الطاقة
+function initEnergyTabs() {
+    const energyTabs = document.querySelectorAll('.energy-tab');
+    
+    energyTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const type = this.getAttribute('data-type');
+            
+            // إزالة النشاط من جميع التبويبات
+            energyTabs.forEach(t => t.classList.remove('active'));
+            
+            // إضافة النشاط للتبويب الحالي
+            this.classList.add('active');
+            
+            // تحديث عرض الطاقة حسب النوع
+            updateEnergyDisplay(type);
+        });
+    });
+}
+
+function updateEnergyDisplay(type) {
+    const student = document.getElementById('studentName').value.trim();
+    const mother = document.getElementById('motherName').value.trim();
+    const father = document.getElementById('fatherName').value.trim();
+    
+    if (!student) return;
+    
+    const studentDual = dualTaro.calculateNameDual(student);
+    const motherDual = mother ? dualTaro.calculateNameDual(mother) : { large: { sum: 0 }, small: { sum: 0 } };
+    const fatherDual = father ? dualTaro.calculateNameDual(father) : { large: { sum: 0 }, small: { sum: 0 } };
+    
+    const isMonth = type === 'months';
+    
+    // تحديث النتائج
+    displayEnergyResults('motherEnergyResults', studentDual, motherDual, null, isMonth);
+    displayEnergyResults('fatherEnergyResults', studentDual, null, fatherDual, isMonth);
+    displayEnergyResults('parentsEnergyResults', studentDual, motherDual, fatherDual, isMonth);
+}
+
+// 🔧 دالة لعرض الإشعارات
 function showNotification(message, type = 'info') {
+    // إنشاء عنصر الإشعار
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.innerHTML = `
@@ -56,21 +72,7 @@ function showNotification(message, type = 'info') {
         </div>
     `;
     
-    document.body.appendChild(notification);
-    
-    // إزالة الإشعار تلقائياً بعد 3 ثوان
-    setTimeout(() => {
-        notification.classList.add('fade-out');
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
-    }, 3000);
-}
-
-// 🔧 تحسين: إضافة التنسيق تلقائياً
-function injectNotificationStyles() {
+    // إضافة الأنماط إذا لم تكن موجودة
     if (!document.querySelector('#notification-styles')) {
         const style = document.createElement('style');
         style.id = 'notification-styles';
@@ -109,26 +111,45 @@ function injectNotificationStyles() {
         `;
         document.head.appendChild(style);
     }
+    
+    document.body.appendChild(notification);
+    
+    // إزالة الإشعار تلقائياً بعد 3 ثوان
+    setTimeout(() => {
+        notification.classList.add('fade-out');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
 }
 
-// 🔧 تحسين: إضافة أزرار إدارة الكاش
-function addCacheManagement() {
-    const sidebarActions = document.querySelector('.sidebar-actions');
+// 🔧 دالة مساعدة لعرض النتائج بشكل آمن
+function displayResult(containerId, content) {
+    const container = document.getElementById(containerId);
     
-    const cacheBtn = document.createElement('button');
-    cacheBtn.className = 'btn btn-outline btn-block';
-    cacheBtn.id = 'cacheBtn';
-    cacheBtn.innerHTML = '<i class="fas fa-broom"></i> تنظيف الذاكرة';
+    if (!container) {
+        console.error(`Container not found: ${containerId}`);
+        return;
+    }
     
-    cacheBtn.addEventListener('click', function() {
-        dualTaro.clearCache();
-        showNotification('✓ تم تنظيف الذاكرة المؤقتة', 'success');
-    });
-    
-    sidebarActions.appendChild(cacheBtn);
+    container.innerHTML = content || createNoResultsHTML('لا توجد نتائج لعرضها');
 }
 
-// الدوال الرئيسية للتحليل
+// 🔧 دالة موحدة للنتائج الفارغة
+function createNoResultsHTML(message = 'لا توجد بيانات كافية') {
+    return `
+        <div class="no-results">
+            <i class="fas fa-info-circle"></i>
+            <h3>${message}</h3>
+            <p>يرجى إدخال البيانات المطلوبة</p>
+        </div>
+    `;
+}
+
+// ========== الدوال الرئيسية للتحليل ==========
+
 function calculateAllResults() {
     const student = document.getElementById('studentName').value.trim();
     const studentBirth = document.getElementById('studentBirth').value;
@@ -144,381 +165,380 @@ function calculateAllResults() {
         return;
     }
 
-    // 🔧 تحسين: إضافة مؤشر تحميل
-    const calculateBtn = document.getElementById('calculateBtn');
-    const originalText = calculateBtn.innerHTML;
-    calculateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحليل...';
-    calculateBtn.classList.add('btn-loading');
+    try {
+        // إضافة مؤشر تحميل
+        const calculateBtn = document.getElementById('calculateBtn');
+        const originalText = calculateBtn.innerHTML;
+        calculateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحليل...';
+        calculateBtn.disabled = true;
 
-    // استخدام setTimeout للسماح بواجهة المستخدم بالتحديث
-    setTimeout(() => {
-        try {
-            // حساب وعرض جميع النتائج
-            showSystem4Results(student, mother, father);
-            showZodiacAnalysis(student, studentBirth, target, targetBirth);
-            
-            if (target) {
-                showDominanceAnalysis(student, target);
-                showCompatibilityResults(student, mother, father, target, targetMother, targetFather);
-            } else {
-                showCompatibilityNoTarget();
+        // استخدام setTimeout للسماح بواجهة المستخدم بالتحديث
+        setTimeout(() => {
+            try {
+                // حساب جميع النتائج
+                showSystem4Results(student, mother, father);
+                showZodiacAnalysis(student, studentBirth, target, targetBirth);
+                
+                if (target) {
+                    showDominanceAnalysis(student, target);
+                    showCompatibilityResults(student, mother, father, target, targetMother, targetFather);
+                } else {
+                    showCompatibilityNoTarget();
+                }
+                
+                calculateAndDisplayEnergyResults(student, mother, father);
+                
+                showNotification('✓ تم الانتهاء من التحليل بنجاح', 'success');
+                
+                // الانتقال إلى قسم القرعة
+                document.querySelector('.nav-btn[data-target="system4"]').click();
+                
+            } catch (error) {
+                console.error('خطأ في التحليل:', error);
+                showNotification('❌ حدث خطأ أثناء التحليل', 'info');
+            } finally {
+                // إعادة زر الحساب إلى وضعه الطبيعي
+                calculateBtn.innerHTML = originalText;
+                calculateBtn.disabled = false;
             }
-            
-            calculateAndDisplayAllEnergyResults(student, mother, father);
-            
-            // الانتقال تلقائياً إلى قسم نظام القرعة
-            document.querySelector('.nav-item[data-target="system4"]').click();
-            
-            showNotification('✓ تم الانتهاء من التحليل بنجاح', 'success');
-        } catch (error) {
-            console.error('خطأ في التحليل:', error);
-            showNotification('❌ حدث خطأ أثناء التحليل', 'info');
-        } finally {
-            // إعادة زر الحساب إلى وضعه الطبيعي
-            calculateBtn.innerHTML = originalText;
-            calculateBtn.classList.remove('btn-loading');
-        }
-    }, 100);
+        }, 100);
+        
+    } catch (error) {
+        console.error('خطأ في التحليل:', error);
+        showNotification('❌ حدث خطأ أثناء التحليل', 'info');
+    }
 }
 
-// باقي الدوال (showSystem4Results, showZodiacAnalysis, showDominanceAnalysis) تبقى كما هي
-// ... [نفس الكود السابق لكل هذه الدوال]
-
 function showSystem4Results(student, mother, father) {
-    const container = document.getElementById('system4Content');
-    
     if (!student) {
-        container.innerHTML = `
-            <div class="no-results">
-                <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 15px; color: var(--danger-color);"></i>
-                <h3>أدخل اسم الطالب على الأقل</h3>
-            </div>
-        `;
+        displayResult('system4Content', null);
         return;
     }
 
-    const results = [];
-    
-    // الطالب (إجباري)
-    results.push({ 
-        name: student, 
-        type: 'الطالب', 
-        result: dualTaro.calculateSystem4Result(student) 
-    });
-    
-    // الأم (اختياري)
-    if (mother && mother.trim() !== '') {
+    try {
+        const results = [];
+        
+        // الطالب (إجباري)
         results.push({ 
-            name: mother, 
-            type: 'الأم', 
-            result: dualTaro.calculateSystem4Result(mother) 
+            name: student, 
+            type: 'الطالب', 
+            result: dualTaro.calculateSystem4Result(student) 
         });
-    } else {
-        results.push({ 
-            name: '----', 
-            type: 'الأم', 
-            result: { stone: '----', stoneName: 'غير مدخل' } 
-        });
-    }
-    
-    // الأب (اختياري)
-    if (father && father.trim() !== '') {
-        results.push({ 
-            name: father, 
-            type: 'الأب', 
-            result: dualTaro.calculateSystem4Result(father) 
-        });
-    } else {
-        results.push({ 
-            name: '----', 
-            type: 'الأب', 
-            result: { stone: '----', stoneName: 'غير مدخل' } 
-        });
-    }
+        
+        // الأم (اختياري)
+        if (mother && mother.trim() !== '') {
+            results.push({ 
+                name: mother, 
+                type: 'الأم', 
+                result: dualTaro.calculateSystem4Result(mother) 
+            });
+        } else {
+            results.push({ 
+                name: '----', 
+                type: 'الأم', 
+                result: { stone: '𐩱', stoneName: 'غير مدخل' } 
+            });
+        }
+        
+        // الأب (اختياري)
+        if (father && father.trim() !== '') {
+            results.push({ 
+                name: father, 
+                type: 'الأب', 
+                result: dualTaro.calculateSystem4Result(father) 
+            });
+        } else {
+            results.push({ 
+                name: '----', 
+                type: 'الأب', 
+                result: { stone: '𐩱', stoneName: 'غير مدخل' } 
+            });
+        }
 
-    // الحصول على النتيجة النهائية بناء على الترتيب
-    const finalSequence = results.map(person => person.result.stone).join('-');
-    const quranResult = getQuranResultBySequence(finalSequence);
+        const finalSequence = results.map(person => person.result.stone).join('-');
+        const quranResult = getQuranResultBySequence(finalSequence);
 
-    let content = `
-        <div class="system4-results">
-            <div class="stones-container">
-                ${results.map(person => `
-                    <div class="stone-card">
-                        <div class="stone-name">${person.type}</div>
-                        <div class="stone-char">${person.result.stone}</div>
-                        <div class="stone-type">${person.name}</div>
-                        <div style="font-size: 0.8rem; margin-top: 8px; color: var(--text-secondary);">
-                            ${person.result.stoneName}
+        let content = `
+            <div class="system4-results">
+                <div class="stones-container">
+                    ${results.map(person => `
+                        <div class="stone-card">
+                            <div class="stone-name">${person.type}</div>
+                            <div class="stone-char">${person.result.stone}</div>
+                            <div class="stone-type">${person.name}</div>
+                            <div style="font-size: 0.9rem; margin-top: 10px; color: var(--text-secondary);">
+                                ${person.result.stoneName}
+                            </div>
                         </div>
+                    `).join('')}
+                </div>
+                
+                <div class="final-sequence">
+                    ${finalSequence.replace(/-/g, ' - ')}
+                </div>
+                
+                ${quranResult ? `
+                    <div class="quran-result">
+                        <div class="quran-reference">${quranResult.reference}</div>
+                        <div class="quran-text">${quranResult.text}</div>
                     </div>
-                `).join('')}
+                ` : `
+                    <div class="no-results">
+                        <p>لا توجد نتيجة قرآنية لهذا التسلسل</p>
+                    </div>
+                `}
             </div>
-            
-            <div class="final-sequence">
-                ${finalSequence.replace(/-/g, ' - ')}
-            </div>
-            
-            ${quranResult ? `
-                <div class="quran-result">
-                    <div class="quran-reference">${quranResult.reference}</div>
-                    <div class="quran-text">${quranResult.text}</div>
-                </div>
-            ` : `
-                <div class="no-results">
-                    <p>لا توجد نتيجة قرآنية لهذا التسلسل</p>
-                </div>
-            `}
-        </div>
-    `;
+        `;
 
-    container.innerHTML = content;
+        displayResult('system4Content', content);
+        
+    } catch (error) {
+        console.error('Error in system4:', error);
+        displayResult('system4Content', createNoResultsHTML('حدث خطأ في حساب نظام القرعة'));
+    }
 }
 
 function showZodiacAnalysis(student, studentBirth, target, targetBirth) {
-    const container = document.getElementById('zodiacContent');
-    
     if (!student) {
-        container.innerHTML = `
-            <div class="no-results">
-                <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 15px; color: var(--danger-color);"></i>
-                <h3>أدخل اسم الطالب على الأقل</h3>
-            </div>
-        `;
+        displayResult('zodiacContent', null);
         return;
     }
 
-    const studentSign = dualTaro.getZodiacSign(studentBirth);
-    const studentZodiacData = studentSign ? dualTaro.zodiacData[studentSign] : null;
+    try {
+        const studentSign = dualTaro.getZodiacSign(studentBirth);
+        const studentZodiacData = studentSign ? dualTaro.zodiacData[studentSign] : null;
 
-    const targetSign = dualTaro.getZodiacSign(targetBirth);
-    const targetZodiacData = targetSign ? dualTaro.zodiacData[targetSign] : null;
+        const targetSign = dualTaro.getZodiacSign(targetBirth);
+        const targetZodiacData = targetSign ? dualTaro.zodiacData[targetSign] : null;
 
-    const compatibility = targetSign ? dualTaro.getZodiacCompatibility(studentSign, targetSign) : "غير محدد";
+        const compatibility = targetSign ? dualTaro.getZodiacCompatibility(studentSign, targetSign) : "غير محدد";
 
-    let content = `
-        <div class="zodiac-grid">
-            <div class="zodiac-card">
-                <div class="zodiac-person">الطالب: ${student}</div>
-                ${studentSign ? `
-                    <div class="zodiac-details">
-                        <div class="zodiac-detail">
-                            <span class="zodiac-label">البرج</span>
-                            <span class="zodiac-value">${studentSign}</span>
+        let content = `
+            <div class="zodiac-grid">
+                <div class="zodiac-card">
+                    <div class="zodiac-person">الطالب: ${student}</div>
+                    ${studentSign ? `
+                        <div class="zodiac-details">
+                            <div class="zodiac-detail">
+                                <span class="zodiac-label">البرج</span>
+                                <span class="zodiac-value">${studentSign}</span>
+                            </div>
+                            <div class="zodiac-detail">
+                                <span class="zodiac-label">الكوكب</span>
+                                <span class="zodiac-value">${studentZodiacData.planet}</span>
+                            </div>
+                            <div class="zodiac-detail">
+                                <span class="zodiac-label">المعدن</span>
+                                <span class="zodiac-value">${studentZodiacData.metal}</span>
+                            </div>
+                            <div class="zodiac-detail">
+                                <span class="zodiac-label">اليوم</span>
+                                <span class="zodiac-value">${studentZodiacData.day}</span>
+                            </div>
                         </div>
-                        <div class="zodiac-detail">
-                            <span class="zodiac-label">الكوكب</span>
-                            <span class="zodiac-value">${studentZodiacData.planet}</span>
+                    ` : `
+                        <div class="no-results" style="padding: 20px;">
+                            <p>أدخل تاريخ ميلاد الطالب</p>
                         </div>
-                        <div class="zodiac-detail">
-                            <span class="zodiac-label">المعدن</span>
-                            <span class="zodiac-value">${studentZodiacData.metal}</span>
+                    `}
+                </div>
+                
+                <div class="zodiac-card">
+                    <div class="zodiac-person">${target ? `المطلوب: ${target}` : 'المطلوب: غير محدد'}</div>
+                    ${targetSign ? `
+                        <div class="zodiac-details">
+                            <div class="zodiac-detail">
+                                <span class="zodiac-label">البرج</span>
+                                <span class="zodiac-value">${targetSign}</span>
+                            </div>
+                            <div class="zodiac-detail">
+                                <span class="zodiac-label">الكوكب</span>
+                                <span class="zodiac-value">${targetZodiacData.planet}</span>
+                            </div>
+                            <div class="zodiac-detail">
+                                <span class="zodiac-label">المعدن</span>
+                                <span class="zodiac-value">${targetZodiacData.metal}</span>
+                            </div>
+                            <div class="zodiac-detail">
+                                <span class="zodiac-label">اليوم</span>
+                                <span class="zodiac-value">${targetZodiacData.day}</span>
+                            </div>
                         </div>
-                        <div class="zodiac-detail">
-                            <span class="zodiac-label">اليوم</span>
-                            <span class="zodiac-value">${studentZodiacData.day}</span>
+                    ` : `
+                        <div class="no-results" style="padding: 20px;">
+                            <p>${target ? 'أدخل تاريخ ميلاد المطلوب' : 'أدخل بيانات المطلوب'}</p>
                         </div>
-                    </div>
-                ` : `
-                    <div class="no-results" style="padding: 20px;">
-                        <p>أدخل تاريخ ميلاد الطالب</p>
-                    </div>
-                `}
-            </div>
-            
-            <div class="zodiac-card">
-                <div class="zodiac-person">${target ? `المطلوب: ${target}` : 'المطلوب: غير محدد'}</div>
-                ${targetSign ? `
-                    <div class="zodiac-details">
-                        <div class="zodiac-detail">
-                            <span class="zodiac-label">البرج</span>
-                            <span class="zodiac-value">${targetSign}</span>
-                        </div>
-                        <div class="zodiac-detail">
-                            <span class="zodiac-label">الكوكب</span>
-                            <span class="zodiac-value">${targetZodiacData.planet}</span>
-                        </div>
-                        <div class="zodiac-detail">
-                            <span class="zodiac-label">المعدن</span>
-                            <span class="zodiac-value">${targetZodiacData.metal}</span>
-                        </div>
-                        <div class="zodiac-detail">
-                            <span class="zodiac-label">اليوم</span>
-                            <span class="zodiac-value">${targetZodiacData.day}</span>
-                        </div>
-                    </div>
-                ` : `
-                    <div class="no-results" style="padding: 20px;">
-                        <p>${target ? 'أدخل تاريخ ميلاد المطلوب' : 'أدخل بيانات المطلوب'}</p>
-                    </div>
-                `}
-            </div>
-        </div>
-        
-        ${studentSign && targetSign ? `
-            <div class="compatibility-result">
-                <div class="compatibility-title">تحليل التوافق بين البرجين</div>
-                <div class="compatibility-text">
-                    ${compatibility}
+                    `}
                 </div>
             </div>
-        ` : ''}
-    `;
+            
+            ${studentSign && targetSign ? `
+                <div class="compatibility-result">
+                    <div class="compatibility-title">تحليل التوافق بين البرجين</div>
+                    <div class="compatibility-text">
+                        ${compatibility}
+                    </div>
+                </div>
+            ` : ''}
+        `;
 
-    container.innerHTML = content;
+        displayResult('zodiacContent', content);
+        
+    } catch (error) {
+        console.error('Error in zodiac:', error);
+        displayResult('zodiacContent', createNoResultsHTML('حدث خطأ في تحليل الإبراج'));
+    }
 }
 
 function showDominanceAnalysis(student, target) {
-    const container = document.getElementById('dominanceContent');
-    
     if (!student || !target) {
-        container.innerHTML = `
-            <div class="no-results">
-                <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 15px; color: var(--danger-color);"></i>
-                <h3>${!student ? 'أدخل اسم الطالب' : 'أدخل اسم المطلوب'} لعرض نتائج الحلبة</h3>
-            </div>
-        `;
+        displayResult('dominanceContent', createNoResultsHTML('أدخل اسم الطالب والمطلوب لعرض نتائج الحلبة'));
         return;
     }
 
-    const studentDual = dualTaro.calculateNameDual(student);
-    const targetDual = dualTaro.calculateNameDual(target);
-    const dominanceResult = dualTaro.calculateDominance(studentDual.large.sum, targetDual.large.sum);
-    
-    if (!dominanceResult) {
-        container.innerHTML = `
-            <div class="no-results">
-                <p>لا توجد نتائج للحلبة</p>
-            </div>
-        `;
-        return;
-    }
+    try {
+        const studentDual = dualTaro.calculateNameDual(student);
+        const targetDual = dualTaro.calculateNameDual(target);
+        const dominanceResult = dualTaro.calculateDominance(studentDual.large.sum, targetDual.large.sum);
+        
+        if (!dominanceResult) {
+            displayResult('dominanceContent', createNoResultsHTML('لا توجد نتائج للحلبة'));
+            return;
+        }
 
-    const studentClass = dominanceResult.studentStatus === 'غالب' ? 'winner' : 'loser';
-    const targetClass = dominanceResult.targetStatus === 'غالب' ? 'winner' : 'loser';
-    const studentStatusClass = dominanceResult.studentStatus === 'غالب' ? 'status-dominant' : 'status-dominated';
-    const targetStatusClass = dominanceResult.targetStatus === 'غالب' ? 'status-dominant' : 'status-dominated';
+        const studentClass = dominanceResult.studentStatus === 'غالب' ? 'winner' : 'loser';
+        const targetClass = dominanceResult.targetStatus === 'غالب' ? 'winner' : 'loser';
+        const studentStatusClass = dominanceResult.studentStatus === 'غالب' ? 'status-dominant' : 'status-dominated';
+        const targetStatusClass = dominanceResult.targetStatus === 'غالب' ? 'status-dominant' : 'status-dominated';
 
-    const content = `
-        <div class="dominance-grid">
-            <div class="dominance-player ${studentClass}">
-                <div class="player-role">الطالب</div>
-                <div class="player-name">${student}</div>
-                <div class="player-number">${dominanceResult.studentNumber}</div>
-                <div class="player-status ${studentStatusClass}">
-                    ${dominanceResult.studentStatus}
+        const content = `
+            <div class="dominance-grid">
+                <div class="dominance-player ${studentClass}">
+                    <div class="player-role">الطالب</div>
+                    <div class="player-name">${student}</div>
+                    <div class="player-number">${dominanceResult.studentNumber}</div>
+                    <div class="player-status ${studentStatusClass}">
+                        ${dominanceResult.studentStatus}
+                    </div>
+                </div>
+                
+                <div class="dominance-player ${targetClass}">
+                    <div class="player-role">المطلوب</div>
+                    <div class="player-name">${target}</div>
+                    <div class="player-number">${dominanceResult.targetNumber}</div>
+                    <div class="player-status ${targetStatusClass}">
+                        ${dominanceResult.targetStatus}
+                    </div>
                 </div>
             </div>
             
-            <div class="dominance-player ${targetClass}">
-                <div class="player-role">المطلوب</div>
-                <div class="player-name">${target}</div>
-                <div class="player-number">${dominanceResult.targetNumber}</div>
-                <div class="player-status ${targetStatusClass}">
-                    ${dominanceResult.targetStatus}
-                </div>
+            <div class="dominance-final">
+                <div class="final-result">${dominanceResult.dominant} يغلب</div>
+                <div class="final-description">${dominanceResult.description}</div>
             </div>
-        </div>
+        `;
+
+        displayResult('dominanceContent', content);
         
-        <div class="dominance-final">
-            <div class="final-result">${dominanceResult.dominant} يغلب</div>
-            <div class="final-description">${dominanceResult.description}</div>
-        </div>
-    `;
-
-    container.innerHTML = content;
+    } catch (error) {
+        console.error('Error in dominance:', error);
+        displayResult('dominanceContent', createNoResultsHTML('حدث خطأ في تحليل الحلبة'));
+    }
 }
 
-// دالة جديدة لعرض التوافق بشكل موازي
 function showCompatibilityResults(student, mother, father, target, targetMother, targetFather) {
-    const studentDual = dualTaro.calculateNameDual(student);
-    const motherDual = dualTaro.calculateNameDual(mother);
-    const fatherDual = dualTaro.calculateNameDual(father);
-    const targetDual = dualTaro.calculateNameDual(target);
-    const targetMotherDual = dualTaro.calculateNameDual(targetMother);
-    const targetFatherDual = dualTaro.calculateNameDual(targetFather);
+    try {
+        const studentDual = dualTaro.calculateNameDual(student);
+        const motherDual = mother ? dualTaro.calculateNameDual(mother) : { large: { sum: 0 }, small: { sum: 0 } };
+        const fatherDual = father ? dualTaro.calculateNameDual(father) : { large: { sum: 0 }, small: { sum: 0 } };
+        const targetDual = dualTaro.calculateNameDual(target);
+        const targetMotherDual = targetMother ? dualTaro.calculateNameDual(targetMother) : { large: { sum: 0 }, small: { sum: 0 } };
+        const targetFatherDual = targetFather ? dualTaro.calculateNameDual(targetFather) : { large: { sum: 0 }, small: { sum: 0 } };
 
-    const largeContainer = document.getElementById('largeCompatibilityResults');
-    const smallContainer = document.getElementById('smallCompatibilityResults');
-    
-    const combinations = [
-        { title: "أصــــــل التـــوافـق", key: "origin" },
-        { title: "بـــاب الـام", key: "mother" },
-        { title: "بـــاب الـاب", key: "father" },
-        { title: "الـــوالدين", key: "parents" }
-    ];
+        const combinations = [
+            { title: "أصــــــل التـــوافـق", key: "origin" },
+            { title: "بـــاب الـام", key: "mother" },
+            { title: "بـــاب الـاب", key: "father" },
+            { title: "الـــوالدين", key: "parents" }
+        ];
 
-    // حساب النتائج لجميع المجموعات
-    const largeResults = combinations.map(combo => {
-        let result;
-        switch(combo.key) {
-            case "origin":
-                result = dualTaro.calculateCompatibility(
-                    studentDual.large.sum, studentDual.small.sum, 0, 0, 0, 0,
-                    targetDual.large.sum, targetDual.small.sum, 0, 0, 0, 0
-                ).large;
-                break;
-            case "mother":
-                result = dualTaro.calculateCompatibility(
-                    studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, 0, 0,
-                    targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, 0, 0
-                ).large;
-                break;
-            case "father":
-                result = dualTaro.calculateCompatibility(
-                    studentDual.large.sum, studentDual.small.sum, 0, 0, fatherDual.large.sum, fatherDual.small.sum,
-                    targetDual.large.sum, targetDual.small.sum, 0, 0, targetFatherDual.large.sum, targetFatherDual.small.sum
-                ).large;
-                break;
-            case "parents":
-                result = dualTaro.calculateCompatibility(
-                    studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, fatherDual.large.sum, fatherDual.small.sum,
-                    targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, targetFatherDual.large.sum, targetFatherDual.small.sum
-                ).large;
-                break;
-        }
-        return { ...combo, result };
-    });
+        // حساب النتائج لجميع المجموعات
+        const largeResults = combinations.map(combo => {
+            let result;
+            switch(combo.key) {
+                case "origin":
+                    result = dualTaro.calculateCompatibility(
+                        studentDual.large.sum, studentDual.small.sum, 0, 0, 0, 0,
+                        targetDual.large.sum, targetDual.small.sum, 0, 0, 0, 0
+                    ).large;
+                    break;
+                case "mother":
+                    result = dualTaro.calculateCompatibility(
+                        studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, 0, 0,
+                        targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, 0, 0
+                    ).large;
+                    break;
+                case "father":
+                    result = dualTaro.calculateCompatibility(
+                        studentDual.large.sum, studentDual.small.sum, 0, 0, fatherDual.large.sum, fatherDual.small.sum,
+                        targetDual.large.sum, targetDual.small.sum, 0, 0, targetFatherDual.large.sum, targetFatherDual.small.sum
+                    ).large;
+                    break;
+                case "parents":
+                    result = dualTaro.calculateCompatibility(
+                        studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, fatherDual.large.sum, fatherDual.small.sum,
+                        targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, targetFatherDual.large.sum, targetFatherDual.small.sum
+                    ).large;
+                    break;
+            }
+            return { ...combo, result };
+        });
 
-    const smallResults = combinations.map(combo => {
-        let result;
-        switch(combo.key) {
-            case "origin":
-                result = dualTaro.calculateCompatibility(
-                    studentDual.large.sum, studentDual.small.sum, 0, 0, 0, 0,
-                    targetDual.large.sum, targetDual.small.sum, 0, 0, 0, 0
-                ).small;
-                break;
-            case "mother":
-                result = dualTaro.calculateCompatibility(
-                    studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, 0, 0,
-                    targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, 0, 0
-                ).small;
-                break;
-            case "father":
-                result = dualTaro.calculateCompatibility(
-                    studentDual.large.sum, studentDual.small.sum, 0, 0, fatherDual.large.sum, fatherDual.small.sum,
-                    targetDual.large.sum, targetDual.small.sum, 0, 0, targetFatherDual.large.sum, targetFatherDual.small.sum
-                ).small;
-                break;
-            case "parents":
-                result = dualTaro.calculateCompatibility(
-                    studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, fatherDual.large.sum, fatherDual.small.sum,
-                    targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, targetFatherDual.large.sum, targetFatherDual.small.sum
-                ).small;
-                break;
-        }
-        return { ...combo, result };
-    });
+        const smallResults = combinations.map(combo => {
+            let result;
+            switch(combo.key) {
+                case "origin":
+                    result = dualTaro.calculateCompatibility(
+                        studentDual.large.sum, studentDual.small.sum, 0, 0, 0, 0,
+                        targetDual.large.sum, targetDual.small.sum, 0, 0, 0, 0
+                    ).small;
+                    break;
+                case "mother":
+                    result = dualTaro.calculateCompatibility(
+                        studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, 0, 0,
+                        targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, 0, 0
+                    ).small;
+                    break;
+                case "father":
+                    result = dualTaro.calculateCompatibility(
+                        studentDual.large.sum, studentDual.small.sum, 0, 0, fatherDual.large.sum, fatherDual.small.sum,
+                        targetDual.large.sum, targetDual.small.sum, 0, 0, targetFatherDual.large.sum, targetFatherDual.small.sum
+                    ).small;
+                    break;
+                case "parents":
+                    result = dualTaro.calculateCompatibility(
+                        studentDual.large.sum, studentDual.small.sum, motherDual.large.sum, motherDual.small.sum, fatherDual.large.sum, fatherDual.small.sum,
+                        targetDual.large.sum, targetDual.small.sum, targetMotherDual.large.sum, targetMotherDual.small.sum, targetFatherDual.large.sum, targetFatherDual.small.sum
+                    ).small;
+                    break;
+            }
+            return { ...combo, result };
+        });
 
-    // عرض النتائج للجمل الكبير
-    largeContainer.innerHTML = largeResults.map(item => createCompactCompatibilityItem(item)).join('');
+        // عرض النتائج للجمل الكبير
+        const largeContainer = document.getElementById('largeCompatibilityResults');
+        largeContainer.innerHTML = largeResults.map(item => createCompactCompatibilityItem(item)).join('');
 
-    // عرض النتائج للجمل الصغير
-    smallContainer.innerHTML = smallResults.map(item => createCompactCompatibilityItem(item)).join('');
+        // عرض النتائج للجمل الصغير
+        const smallContainer = document.getElementById('smallCompatibilityResults');
+        smallContainer.innerHTML = smallResults.map(item => createCompactCompatibilityItem(item)).join('');
+        
+    } catch (error) {
+        console.error('Error in compatibility:', error);
+        displayResult('compatibilityContent', createNoResultsHTML('حدث خطأ في حساب التوافق'));
+    }
 }
 
-// دالة إنشاء عنصر توافق مضغوط
 function createCompactCompatibilityItem(item) {
     const result = item.result;
     
@@ -618,38 +638,27 @@ function createCompactCompatibilityItem(item) {
     `;
 }
 
-// تحديث دالة showCompatibilityNoTarget
 function showCompatibilityNoTarget() {
     const largeContainer = document.getElementById('largeCompatibilityResults');
     const smallContainer = document.getElementById('smallCompatibilityResults');
     
-    const message = `
-        <div class="compatibility-item">
-            <div class="no-results" style="padding: 30px; text-align: center;">
-                <i class="fas fa-info-circle" style="font-size: 3rem; margin-bottom: 15px; color: var(--info-color);"></i>
-                <h3>بيانات غير كافية</h3>
-                <p>أدخل اسم المطلوب لعرض تحليل التوافق</p>
-            </div>
-        </div>
-    `;
+    const message = createNoResultsHTML('أدخل اسم المطلوب لعرض تحليل التوافق');
     
     largeContainer.innerHTML = message;
     smallContainer.innerHTML = message;
 }
 
-function calculateAndDisplayAllEnergyResults(student, mother, father) {
-    const studentDual = dualTaro.calculateNameDual(student);
-    const motherDual = dualTaro.calculateNameDual(mother);
-    const fatherDual = dualTaro.calculateNameDual(father);
-
-    // عرض نتائج الطاقة لجميع المجموعات
-    displayEnergyResults('student-mother-days-results', studentDual, motherDual, null, false);
-    displayEnergyResults('student-father-days-results', studentDual, null, fatherDual, false);
-    displayEnergyResults('student-parents-days-results', studentDual, motherDual, fatherDual, false);
+function calculateAndDisplayEnergyResults(student, mother, father) {
+    if (!student) return;
     
-    displayEnergyResults('student-mother-months-results', studentDual, motherDual, null, true);
-    displayEnergyResults('student-father-months-results', studentDual, null, fatherDual, true);
-    displayEnergyResults('student-parents-months-results', studentDual, motherDual, fatherDual, true);
+    const studentDual = dualTaro.calculateNameDual(student);
+    const motherDual = mother ? dualTaro.calculateNameDual(mother) : { large: { sum: 0 }, small: { sum: 0 } };
+    const fatherDual = father ? dualTaro.calculateNameDual(father) : { large: { sum: 0 }, small: { sum: 0 } };
+    
+    // عرض النتائج المفصلة (الأيام أولاً)
+    displayEnergyResults('motherEnergyResults', studentDual, motherDual, null, false);
+    displayEnergyResults('fatherEnergyResults', studentDual, null, fatherDual, false);
+    displayEnergyResults('parentsEnergyResults', studentDual, motherDual, fatherDual, false);
 }
 
 function displayEnergyResults(containerId, studentDual, motherDual, fatherDual, isMonth) {
@@ -677,11 +686,7 @@ function displayEnergyResults(containerId, studentDual, motherDual, fatherDual, 
     results.sort((a, b) => a.order - b.order);
     
     if (results.length === 0) {
-        container.innerHTML = `
-            <div class="no-results">
-                <p>لا توجد نتائج للطاقة</p>
-            </div>
-        `;
+        container.innerHTML = createNoResultsHTML('لا توجد نتائج للطاقة');
         return;
     }
 
@@ -721,6 +726,7 @@ function displayEnergyResults(containerId, studentDual, motherDual, fatherDual, 
     }).join('');
 }
 
+// دوال مساعدة
 function clearForm() {
     document.getElementById('studentName').value = '';
     document.getElementById('studentBirth').value = '';
@@ -735,9 +741,6 @@ function clearForm() {
     document.querySelectorAll('.results-content').forEach(container => {
         container.innerHTML = '';
     });
-    
-    // العودة إلى قسم بيانات الإدخال
-    document.querySelector('.nav-item[data-target="input-data"]').click();
     
     showNotification('✓ تم مسح جميع البيانات', 'success');
 }
@@ -755,87 +758,85 @@ function loadSampleData() {
     showNotification('✓ تم تحميل البيانات التجريبية', 'success');
 }
 
-// إدارة التبويبات الداخلية
-function initInternalTabs() {
-    // تبويبات التوافق
-    document.querySelectorAll('.compatibility-tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-            const systemId = this.getAttribute('data-system');
-            const parent = this.closest('.results-content');
-            
-            parent.querySelectorAll('.compatibility-tab').forEach(t => t.classList.remove('active'));
-            parent.querySelectorAll('.compatibility-content').forEach(c => c.classList.remove('active'));
-            
-            this.classList.add('active');
-            document.getElementById(systemId + 'Compatibility').classList.add('active');
-        });
-    });
+// دالة للحصول على النتيجة القرآنية بناء على التسلسل
+function getQuranResultBySequence(sequence) {
+    const quranResults = {
+        '𐩱-𐩱-𐩱': { reference: 'المدثر 12', text: 'مَا سَلَكَكُمْ فِي سَقَرَ' },
+        '𐩱-𐩱-𐩨': { reference: 'المنافقون 5', text: 'وَإِذَا قِيلَ لَهُمْ تَعَالَوْا يَسْتَغْفِرْ لَكُمْ رَسُولُ اللَّهِ لَوَّوْا رُءُوسَهُمْ' },
+        '𐩱-𐩱-𐩴': { reference: 'آل عمران 170', text: 'فَرِحِينَ بِمَا آتَاهُمُ اللَّهُ مِن فَضْلِهِ' },
+        '𐩱-𐩱-𐩵': { reference: 'التوبة 51', text: 'قُل لَّن يُصِيبَنَا إِلَّا مَا كَتَبَ اللَّهُ لَنَا' },
+        '𐩱-𐩨-𐩱': { reference: 'آل عمران 30', text: 'يَوْمَ تَجِدُ كُلُّ نَفْسٍ مَّا عَمِلَتْ مِنْ خَيْرٍ مُّحْضَرًا' },
+        '𐩱-𐩨-𐩨': { reference: 'الحجر 45-46', text: 'إِنَّ الْمُتَّقِينَ فِي جَنَّاتٍ وَعُيُونٍ ادْخُلُوهَا بِسَلَامٍ آمِنِينَ' },
+        '𐩱-𐩨-𐩴': { reference: 'مريم 62', text: 'لَّا يَسْمَعُونَ فِيهَا لَغْوًا إِلَّا سَلَامًا' },
+        '𐩱-𐩨-𐩵': { reference: 'الطلاق 2-3', text: 'وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا وَيَرْزُقْهُ مِنْ حَيْثُ لَا يَحْتَسِبُ' },
+        '𐩱-𐩴-𐩱': { reference: 'الروم 46', text: 'وَمِنْ آيَاتِهِ أَن يُرْسِلَ الرِّيَاحَ مُبَشِّرَاتٍ' },
+        '𐩱-𐩴-𐩨': { reference: 'الأعراف 192-193', text: 'وَلَا يَسْتَطِيعُونَ لَهُمْ نَصْرًا وَلَا أَنفُسَهُمْ يَنصُرُونَ' },
+        '𐩱-𐩴-𐩴': { reference: 'فصلت 46 - آل عمران 120', text: 'مَنْ عَمِلَ صَالِحًا فَلِنَفْسِهِ وَمَنْ أَسَاءَ فَعَلَيْهَا' },
+        '𐩱-𐩴-𐩵': { reference: 'آل عمران 103', text: 'وَاعْتَصِمُوا بِحَبْلِ اللَّهِ جَمِيعًا وَلَا تَفَرَّقُوا' },
+        '𐩱-𐩵-𐩱': { reference: 'المائدة 90', text: 'يَا أَيُّهَا الَّذِينَ آمَنُوا إِنَّمَا الْخَمْرُ وَالْمَيْسِرُ وَالْأَنصَابُ وَالْأَزْلَامُ رِجْسٌ مِّنْ عَمَلِ الشَّيْطَانِ' },
+        '𐩱-𐩵-𐩨': { reference: 'آل عمران 13', text: 'قَدْ كَانَ لَكُمْ آيَةٌ فِي فِئَتَيْنِ الْتَقَتَا' },
+        '𐩱-𐩵-𐩴': { reference: 'البقرة 208', text: 'يَا أَيُّهَا الَّذِينَ آمَنُوا ادْخُلُوا فِي السِّلْمِ كَافَّةً' },
+        '𐩱-𐩵-𐩵': { reference: 'النساء 71', text: 'يَا أَيُّهَا الَّذِينَ آمَنُوا خُذُوا حِذْرَكُمْ' },
+        '𐩨-𐩱-𐩱': { reference: 'لقمان 20', text: 'أَلَمْ تَرَوْا أَنَّ اللَّهَ سَخَّرَ لَكُم مَّا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ' },
+        '𐩨-𐩱-𐩨': { reference: 'النور 38', text: 'لِيَجْزِيَهُمُ اللَّهُ أَحْسَنَ مَا عَمِلُوا وَيَزِيدَهُم مِّن فَضْلِهِ' },
+        '𐩨-𐩱-𐩴': { reference: 'المائدة 23', text: 'قَالَ رَجُلَانِ مِنَ الَّذِينَ يَخَافُونَ أَنْعَمَ اللَّهُ عَلَيْهِمَا' },
+        '𐩨-𐩱-𐩵': { reference: 'الأنبياء 76', text: 'وَنُوحًا إِذْ نَادَىٰ مِن قَبْلُ فَاسْتَجَبْنَا لَهُ فَنَجَّيْنَاهُ وَأَهْلَهُ مِنَ الْكَرْبِ الْعَظِيمِ' },
+        '𐩨-𐩨-𐩱': { reference: 'ق 34-35', text: 'ادْخُلُوهَا بِسَلَامٍ ذَٰلِكَ يَوْمُ الْخُلُودِ لَهُم مَّا يَشَاءُونَ فِيهَا وَلَدَيْنَا مَزِيدٌ' },
+        '𐩨-𐩨-𐩨': { reference: 'المائدة 3', text: 'الْيَوْمَ أَكْمَلْتُ لَكُمْ دِينَكُمْ وَأَتْمَمْتُ عَلَيْكُمْ نِعْمَتِي' },
+        '𐩨-𐩨-𐩴': { reference: 'الإسراء 82 - يونس 57 - التوبة 14 - الشعراء 80', text: 'وَنُنَزِّلُ مِنَ الْقُرْآنِ مَا هُوَ شِفَاءٌ وَرَحْمَةٌ لِّلْمُؤْمِنِينَ' },
+        '𐩨-𐩨-𐩵': { reference: 'الأنفال 66', text: 'الْآنَ خَفَّفَ اللَّهُ عَنكُمْ وَعَلِمَ أَنَّ فِيكُمْ ضَعفًا' },
+        '𐩨-𐩴-𐩱': { reference: 'الحديد 20', text: 'اعْلَمُوا أَنَّمَا الْحَيَاةُ الدُّنْيَا لَعِبٌ وَلَهْوٌ وَزِينَةٌ وَتَفَاخُرٌ بَيْنَكُمْ' },
+        '𐩨-𐩴-𐩨': { reference: 'لقمان 27', text: 'وَلَوْ أَنَّمَا فِي الْأَرْضِ مِن شَجَرَةٍ أَقْلَامٌ وَالْبَحْرُ يَمُدُّهُ مِن بَعْدِهِ سَبْعَةُ أَبْحُرٍ مَّا نَفِدَتْ كَلِمَاتُ اللَّهِ' },
+        '𐩨-𐩴-𐩴': { reference: 'التوبة 188', text: 'لِيَجْزِيَ اللَّهُ كُلَّ نَفْسٍ mَّا كَسَبَتْ' },
+        '𐩨-𐩴-𐩵': { reference: 'الأحقاف 35', text: 'فَاصْبِرْ كَمَا صَبَرَ أُولُو الْعَزْمِ مِنَ الرُّسُلِ' },
+        '𐩨-𐩵-𐩱': { reference: 'يوسف 24', text: 'وَلَقَدْ هَمَّتْ بِهِ وَهَمَّ بِهَا لَوْلَا أَن رَّأَىٰ بُرْهَانَ رَبِّهِ' },
+        '𐩨-𐩵-𐩨': { reference: 'الطلاق 9', text: 'فَاتَّقُوا اللَّهَ يَا أُولِي الْأَلْبَابِ لَعَلَّكُمْ تُفْلِحُونَ' },
+        '𐩨-𐩵-𐩴': { reference: 'الحج 65', text: 'أَلَمْ تَرَ أَنَّ اللَّهَ سَخَّرَ لَكُم mَّا فِي الْأَرْضِ' },
+        '𐩨-𐩵-𐩵': { reference: 'الكهف 110', text: 'فَمَن كَانَ يَرْجُو لِقَاءَ رَبِّهِ فَلْيَعْمَلْ عَمَلًا صَالِحًا وَلَا يُشْرِكْ بِعِبَادَةِ رَبِّهِ أَحدًا' },
+        '𐩴-𐩱-𐩱': { reference: 'النور 55 - طه 77', text: 'وَعَدَ اللَّهُ الَّذِينَ آمَنُوا مِنكُمْ وَعَمِلُوا الصَّالِحَاتِ لَيَسْتَخْلِفَنَّهُمْ فِي الْأَرْضِ' },
+        '𐩴-𐩱-𐩨': { reference: 'النور 38 - الروم 32', text: 'لِيَجْزِيَهُمُ اللَّهُ أَحْسَنَ مَا عَمِلُوا وَيَزِيدَهُم mِّن فَضْلِهِ' },
+        '𐩴-𐩱-𐩴': { reference: 'يوسف 87', text: 'وَلَا تَيْأَسُوا مِن رَّوْحِ اللَّهِ ۖ إِنَّهُ لَا يَيْأَسُ مِن رَّوْحِ اللَّهِ إِلَّا الْقَوْمُ الْكَافِرُونَ' },
+        '𐩴-𐩱-𐩵': { reference: 'الأحزاب 25', text: 'وَرَدَّ اللَّهُ الَّذِينَ كَفَرُوا بِغَيْظِهِمْ لَمْ يَنَالُوا خَيْرًا' },
+        '𐩴-𐩨-𐩱': { reference: 'البقرة 17', text: 'مَثَلُهُمْ كَمَثَلِ الَّذِي اسْتَوْقَدَ نَارًا فَلَمَّا أَضَاءَتْ مَا حَوْلَهُ ذَهَبَ اللَّهُ بِنُورِهِمْ' },
+        '𐩴-𐩨-𐩨': { reference: 'القمر 11-14', text: 'فَفَتَحْنَا أَبْوَابَ السَّمَاءِ بِمَاءٍ mُّنْهَمِرٍ' },
+        '𐩴-𐩨-𐩴': { reference: 'الزخرف 11 - النحل 11', text: 'وَالَّذِي نَزَّلَ مِنَ السَّمَاءِ مَاءً بِقَدَرٍ' },
+        '𐩴-𐩨-𐩵': { reference: 'البقرة 286 - الطلاق 7', text: 'لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا' },
+        '𐩴-𐩴-𐩱': { reference: 'الزمر 10', text: 'قُلْ يَا عِبَادِ الَّذِينَ آمَنُوا اتَّقُوا رَبَّكُمْ ۚ لِلَّذِينَ أَحسَنُوا فِي هَٰذِهِ الدُّنْيَا حَسَنَةٌ' },
+        '𐩴-𐩴-𐩨': { reference: 'طه 97', text: 'قَالَ فَاذْهَبْ فَإِنَّ لَكَ فِي الْحَيَاةِ أَن تَقُولَ لَا مِسَاسَ' },
+        '𐩴-𐩴-𐩴': { reference: 'يونس 58', text: 'قُلْ بِفَضْلِ اللَّهِ وَبِرَحْمَتِهِ فَبِذَٰلِكَ فَلْيَفْرَحُوا' },
+        '𐩴-𐩴-𐩵': { reference: 'النحل 37', text: 'إِن تَحْرِصْ عَلَىٰ هُدَاهُمْ فَإِنَّ اللَّهَ لَا يَهْدِي مَن يُضِلُّ' },
+        '𐩴-𐩵-𐩱': { reference: 'إبراهيم 7', text: 'وَإِذْ تَأَذَّنَ رَبُّكُمْ لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ' },
+        '𐩴-𐩵-𐩨': { reference: 'التوبة 80', text: 'اسْتَغْفِرْ لَهُمْ أَوْ لَا تَسْتَغْفِرْ لَهُمْ إِن تَسْتَغْفِرْ لَهُمْ سَبْعِينَ مَرَّةً فَلَن يَغْفِرَ اللَّهُ لَهُمْ' },
+        '𐩴-𐩵-𐩴': { reference: 'إبراهيم 21', text: 'وَبَرَزُوا لِلَّهِ جَمِيعًا فَقَالَ الضُّعَفَاءُ لِلَّذِينَ اسْتَكْبَرُوا إِنَّا كُنَّا لَكُمْ تَبَعًا' },
+        '𐩴-𐩵-𐩵': { reference: 'الأنبياء 103', text: 'لَا يَحْزُنُهُمُ الْفَزَعُ الْأَكْبَرُ وَتَتَلَقَّاهُمُ الْمَلَائِكَةُ هَٰذَا يَوْمُكُمُ الَّذِي كُنتُمْ تُوعَدُونَ' },
+        '𐩵-𐩱-𐩱': { reference: 'ص 26', text: 'وَمَا خَلَقْنَا السَّمَاءَ وَالْأَرْضَ وَمَا بَيْنَهُمَا بَاطِلًا' },
+        '𐩵-𐩱-𐩨': { reference: 'الصافات 143', text: 'فَلَوْلَا أَنَّهُ كَانَ مِنَ الْمُسَبِّحِينَ' },
+        '𐩵-𐩱-𐩴': { reference: 'يوسف 101 - غافر 44', text: 'فَاطِرَ السَّمَاوَاتِ وَالْأَرْضِ أَنتَ وَلِيِّي فِي الدُّنْيَا وَالْآخِرَةِ' },
+        '𐩵-𐩱-𐩵': { reference: 'هود 123', text: 'وَلِلَّهِ غَيْبُ السَّمَاوَاتِ وَالْأَرْضِ وَإِلَيْهِ يُرْجَعُ الْأَمْرُ كُلُّهُ' },
+        '𐩵-𐩨-𐩱': { reference: 'القمر 11', text: 'فَفَتَحْنَا أَبْوَابَ السَّمَاءِ بِمَاءٍ mُّنْهَمِرٍ' },
+        '𐩵-𐩨-𐩨': { reference: 'يونس 23', text: 'فَلَمَّا أَنْجَاهُمْ إِذَا هُمْ يَبْغُونَ فِي الْأَرْضِ بِغَيْرِ الْحَقِّ' },
+        '𐩵-𐩨-𐩴': { reference: 'الحجر 22', text: 'هُوَ اللَّهُ الَّذِي لَا إِلَٰهَ إِلَّا هُوَ ۖ عَالِمُ الْغَيْبِ وَالشَّهَادَةِ' },
+        '𐩵-𐩨-𐩵': { reference: 'الأنفال 19', text: 'إِن تَسْتَفْتِحُوا فَقَدْ جَاءَكُمُ الْفَتْحُ' },
+        '𐩵-𐩴-𐩱': { reference: 'الحديد 20', text: 'اعْلَمُوا أَنَّمَا الْحَيَاةُ الدُّنْيَا لَعِبٌ وَلَهْوٌ وَزِينَةٌ وَتَفَاخُرٌ بَيْنَكُمْ' },
+        '𐩵-𐩴-𐩨': { reference: 'المنافقون 9', text: 'يَا أَيُّhَا الَّذِينَ آمَنُوا لَا تُلْهِكُمْ أَمْوَالُكُمْ وَلَا أَوْلَادُكُمْ عَن ذِكْرِ اللَّهِ' },
+        '𐩵-𐩴-𐩴': { reference: 'الحديد 25', text: 'لَقَدْ أَرْسَلْنَا رُسُلَنَا بِالْبَيِّنَاتِ وَأَنزَلْنَا مَعَهُمُ الْكِتَابَ وَالْمِيزانَ' },
+        '𐩵-𐩴-𐩵': { reference: 'يونس 57', text: 'يَا أَيُّهَا النَّاسُ قَدْ جَاءَتْكُم mَّوْعِظَةٌ مِّن رَّبِّكُمْ وَشِفَاءٌ لِّمَا فِي الصُّدُورِ' },
+        '𐩵-𐩵-𐩱': { reference: 'لقمان 7 - البقرة 286', text: 'وَإِذَا تُتْلَىٰ عَلَيْهِ آيَاتُنَا وَلَّىٰ مُسْتَكْبِرًا كَأَن لَّمْ يَسْمَعْهَا' },
+        '𐩵-𐩵-𐩨': { reference: 'آل عمران 160 - الفتح 5', text: 'إِن يَنصُرْكُمُ اللَّهُ فَلَا غَالِبَ لَكُمْ' },
+        '𐩵-𐩵-𐩴': { reference: 'الكهف 157', text: 'وَإِذَا قِيلَ لَهُمُ اتَّبِعُوا مَا أَنزَلَ اللَّهُ قَالُوا بَلْ نَتَّبِعُ مَا وَجَدْنَا عَلَيْهِ آبَاءَنَا' },
+        '𐩵-𐩵-𐩵': { reference: 'الروم 4-5', text: 'فِي بِضْعِ سِنِينَ ۗ لِلَّهِ الْأَمْرُ مِن قَبْلُ وَمِن بَعْدُ ۚ وَيَوْمَئِذٍ يَفْرَحُ الْمُؤْمِنُونَ' }
+    };
 
-    // تبويبات الطاقة
-    document.querySelectorAll('.energy-tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-            const systemId = this.getAttribute('data-system');
-            const parent = this.closest('.results-content');
-            
-            parent.querySelectorAll('.energy-tab').forEach(t => t.classList.remove('active'));
-            parent.querySelectorAll('.energy-content').forEach(c => c.classList.remove('active'));
-            
-            this.classList.add('active');
-            document.getElementById(systemId + 'Energy').classList.add('active');
-        });
-    });
-
-    // تبويبات المجموعات
-    document.querySelectorAll('.combination-tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-            const combinationId = this.getAttribute('data-combination');
-            const parent = this.closest('.energy-content');
-            
-            parent.querySelectorAll('.combination-tab').forEach(t => t.classList.remove('active'));
-            parent.querySelectorAll('.combination-content').forEach(c => c.classList.remove('active'));
-            
-            this.classList.add('active');
-            document.getElementById(combinationId + '-content').classList.add('active');
-        });
-    });
+    return quranResults[sequence] || null;
 }
 
 // أحداث الصفحة
 document.addEventListener('DOMContentLoaded', function() {
-    // تهيئة النجوم
-    createStars();
-    
     // إدارة التنقل
     initNavigation();
     
-    // إدارة التبويبات الداخلية
-    initInternalTabs();
-    
-    // 🔧 تحسين: إدارة الكاش والإشعارات
-    injectNotificationStyles();
-    addCacheManagement();
-
-    // الوضع الليلي
-    const themeToggle = document.getElementById('themeToggle');
-    const savedTheme = localStorage.getItem('theme');
-    
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-        themeToggle.innerHTML = '<i class="fas fa-sun"></i> وضع النهار';
-    }
-
-    themeToggle.addEventListener('click', function() {
-        document.body.classList.toggle('dark-mode');
-        if (document.body.classList.contains('dark-mode')) {
-            localStorage.setItem('theme', 'dark');
-            themeToggle.innerHTML = '<i class="fas fa-sun"></i> وضع النهار';
-            showNotification('🌙 تم تفعيل الوضع الليلي', 'success');
-        } else {
-            localStorage.setItem('theme', 'light');
-            themeToggle.innerHTML = '<i class="fas fa-moon"></i> وضع الليل';
-            showNotification('☀️ تم تفعيل وضع النهار', 'success');
-        }
-    });
+    // إدارة تبويبات الطاقة
+    initEnergyTabs();
 
     // الأحداث الرئيسية
     document.getElementById('calculateBtn').addEventListener('click', calculateAllResults);
