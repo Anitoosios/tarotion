@@ -3,706 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تاروتيون - إدارة المواعيد</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>نظام أحمد ناجي - التحليل الشامل</title>
     <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'El Messiri', sans-serif;
-        }
-        
-        :root {
-            --primary: #0F0B1F;
-            --secondary: #1A1435;
-            --accent: #8B5CF6;
-            --accent-light: #A78BFA;
-            --gold: #FBBF24;
-            --gold-light: #FCD34D;
-            --text: #F8FAFC;
-            --text-secondary: #CBD5E1;
-            --card-bg: rgba(30, 27, 51, 0.7);
-            --card-border: rgba(139, 92, 246, 0.3);
-            --glow: 0 0 15px rgba(139, 92, 246, 0.5);
-            --tarot-primary: #1E3A8A;
-            --tarot-secondary: #3B82F6;
-            --tarot-accent: #60A5FA;
-            --horoscope-primary: #065F46;
-            --horoscope-secondary: #10B981;
-            --horoscope-accent: #34D399;
-            --coffee-primary: #5B21B6;
-            --coffee-secondary: #8B5CF6;
-            --coffee-accent: #A78BFA;
-            --dark: #0F172A;
-            --darker: #020617;
-            --light: #F8FAFC;
-        }
-        
-        body {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, #2D1B69 100%);
-            color: var(--text);
-            line-height: 1.6;
-            min-height: 100vh;
-            padding: 0;
-            position: relative;
-            overflow-x: hidden;
-        }
-        
-        /* النجوم الخلفية */
-        .stars {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-        }
-
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 5s infinite;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
-        
-        .container {
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 20px 15px;
-        }
-        
-        /* الهيدر */
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            position: relative;
-            padding: 30px 0 20px;
-        }
-        
-        .logo {
-            font-size: 2.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--gold) 0%, var(--accent-light) 50%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 15px;
-            text-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-            letter-spacing: 2px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .logo::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            right: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-        }
-        
-        .tagline {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            font-weight: 400;
-            max-width: 800px;
-            margin: 20px auto 0;
-            line-height: 1.6;
-            position: relative;
-            padding: 0 10px;
-        }
-
-        .tagline::before, .tagline::after {
-            content: "✦";
-            color: var(--gold);
-            margin: 0 10px;
-            font-size: 1rem;
-        }
-        
-        /* نظام التبويبات العمودية */
-        .tabs-vertical-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .vertical-tab {
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--card-border);
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            transition: all 0.4s ease;
-            position: relative;
-        }
-
-        .vertical-tab::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-            z-index: -1;
-        }
-
-        .vertical-tab:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--glow), 0 12px 25px rgba(0, 0, 0, 0.5);
-        }
-        
-        .vertical-tab.tarot-tab {
-            border-color: rgba(59, 130, 246, 0.3);
-        }
-        
-        .vertical-tab.horoscope-tab {
-            border-color: rgba(16, 185, 129, 0.3);
-        }
-        
-        .vertical-tab.coffee-tab {
-            border-color: rgba(139, 92, 246, 0.3);
-        }
-        
-        .vertical-tab-header {
-            padding: 20px 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-bottom: 1px solid;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .vertical-tab-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, transparent 100%);
-            z-index: -1;
-        }
-        
-        .vertical-tab.tarot-tab .vertical-tab-header {
-            background: linear-gradient(135deg, rgba(30, 58, 138, 0.3) 0%, rgba(59, 130, 246, 0.15) 100%);
-            border-bottom-color: rgba(59, 130, 246, 0.2);
-        }
-        
-        .vertical-tab.horoscope-tab .vertical-tab-header {
-            background: linear-gradient(135deg, rgba(6, 95, 70, 0.3) 0%, rgba(16, 185, 129, 0.15) 100%);
-            border-bottom-color: rgba(16, 185, 129, 0.2);
-        }
-        
-        .vertical-tab.coffee-tab .vertical-tab-header {
-            background: linear-gradient(135deg, rgba(91, 33, 182, 0.3) 0%, rgba(139, 92, 246, 0.15) 100%);
-            border-bottom-color: rgba(139, 92, 246, 0.2);
-        }
-        
-        .vertical-tab-header.active {
-            background: rgba(255, 255, 255, 0.08) !important;
-            border-bottom-color: transparent;
-            border-radius: 20px 20px 0 0;
-        }
-        
-        .vertical-tab-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-            width: 100%;
-        }
-        
-        .vertical-tab.tarot-tab .vertical-tab-title {
-            color: #60A5FA;
-        }
-        
-        .vertical-tab.horoscope-tab .vertical-tab-title {
-            color: #34D399;
-        }
-        
-        .vertical-tab.coffee-tab .vertical-tab-title {
-            color: #A78BFA;
-        }
-        
-        .vertical-tab-title .price-range {
-            font-size: 1.1rem;
-            font-weight: 600;
-            padding: 6px 15px;
-            border-radius: 15px;
-            width: fit-content;
-        }
-        
-        .vertical-tab.tarot-tab .price-range {
-            background: rgba(59, 130, 246, 0.25);
-            color: #BFDBFE;
-        }
-        
-        .vertical-tab.horoscope-tab .price-range {
-            background: rgba(16, 185, 129, 0.25);
-            color: #A7F3D0;
-        }
-        
-        .vertical-tab.coffee-tab .price-range {
-            background: rgba(139, 92, 246, 0.25);
-            color: #DDD6FE;
-        }
-        
-        .vertical-tab-subtitle {
-            font-size: 1rem;
-            color: rgba(248, 250, 252, 0.8);
-            text-align: right;
-            width: 100%;
-        }
-        
-        .vertical-tab-content {
-            padding: 0;
-            max-height: 0;
-            overflow: hidden;
-            transition: all 0.5s ease;
-        }
-        
-        .vertical-tab-content.active {
-            padding: 20px 15px;
-            max-height: 1000px;
-        }
-        
-        /* الحقول الأفقية الجديدة */
-        .service-fields {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-        }
-        
-        .service-field {
-            background: rgba(20, 18, 40, 0.7);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 12px;
-            padding: 15px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(5px);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            min-height: auto;
-        }
-
-        .service-field::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-            z-index: -1;
-        }
-        
-        .tarot-tab .service-field {
-            border-color: rgba(59, 130, 246, 0.25);
-        }
-        
-        .horoscope-tab .service-field {
-            border-color: rgba(16, 185, 129, 0.25);
-        }
-        
-        .coffee-tab .service-field {
-            border-color: rgba(139, 92, 246, 0.25);
-        }
-        
-        .service-field:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--glow), 0 5px 15px rgba(0, 0, 0, 0.3);
-            border-color: rgba(139, 92, 246, 0.4);
-        }
-        
-        .service-field.featured {
-            border-width: 2px;
-            background: rgba(30, 27, 51, 0.9);
-        }
-        
-        .field-content {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            flex: 1;
-        }
-        
-        .field-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin: 0;
-        }
-        
-        .tarot-tab .field-title {
-            color: #93C5FD;
-        }
-        
-        .horoscope-tab .field-title {
-            color: #6EE7B7;
-        }
-        
-        .coffee-tab .field-title {
-            color: #C4B5FD;
-        }
-        
-        .field-description {
-            font-size: 0.9rem;
-            color: rgba(248, 250, 252, 0.8);
-            margin: 0;
-        }
-        
-        .field-details {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-shrink: 0;
-        }
-        
-        .field-duration {
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 10px;
-            border-radius: 8px;
-        }
-        
-        .tarot-tab .field-duration {
-            background: rgba(59, 130, 246, 0.15);
-            color: #BFDBFE;
-        }
-        
-        .horoscope-tab .field-duration {
-            background: rgba(16, 185, 129, 0.15);
-            color: #A7F3D0;
-        }
-        
-        .coffee-tab .field-duration {
-            background: rgba(139, 92, 246, 0.15);
-            color: #DDD6FE;
-        }
-        
-        .field-price {
-            font-size: 1.3rem;
-            font-weight: 700;
-            min-width: 70px;
-            text-align: left;
-        }
-        
-        .tarot-tab .field-price {
-            color: #60A5FA;
-        }
-        
-        .horoscope-tab .field-price {
-            color: #34D399;
-        }
-        
-        .coffee-tab .field-price {
-            color: #A78BFA;
-        }
-        
-        /* الفوتر */
-        .footer {
-            text-align: center;
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-        }
-
-        .footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-        }
-        
-        .footer-text {
-            color: rgba(248, 250, 252, 0.6);
-            font-size: 1rem;
-        }
-        
-        /* تحسينات للشاشات الكبيرة */
-        @media (min-width: 768px) {
-            .container {
-                padding: 30px 20px;
-            }
-            
-            .header {
-                margin-bottom: 50px;
-                padding: 40px 0 30px;
-            }
-            
-            .logo {
-                font-size: 3.5rem;
-                letter-spacing: 3px;
-            }
-            
-            .tagline {
-                font-size: 1.4rem;
-            }
-            
-            .vertical-tab-header {
-                padding: 25px;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                gap: 20px;
-            }
-            
-            .vertical-tab-title {
-                font-size: 1.8rem;
-                flex-direction: row;
-                align-items: center;
-                gap: 15px;
-                width: auto;
-            }
-            
-            .vertical-tab-title .price-range {
-                font-size: 1.2rem;
-                padding: 8px 20px;
-            }
-            
-            .vertical-tab-subtitle {
-                font-size: 1.1rem;
-                text-align: left;
-                width: auto;
-            }
-            
-            .vertical-tab-content.active {
-                padding: 25px;
-            }
-            
-            .service-fields {
-                gap: 15px;
-            }
-            
-            .service-field {
-                padding: 18px 20px;
-            }
-            
-            .field-content {
-                flex-direction: row;
-                align-items: center;
-                gap: 20px;
-            }
-            
-            .field-title {
-                font-size: 1.2rem;
-                min-width: 120px;
-            }
-            
-            .field-description {
-                font-size: 1rem;
-            }
-            
-            .field-price {
-                font-size: 1.5rem;
-                min-width: 80px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .logo {
-                font-size: 4.5rem;
-            }
-            
-            .service-field {
-                padding: 20px 25px;
-            }
-        }
-
-        /* تأثيرات إضافية */
-        .floating {
-            animation: floating 6s ease-in-out infinite;
-        }
-
-        @keyframes floating {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- النجوم الخلفية -->
-    <div class="stars" id="stars"></div>
+    <div class="stars-background"></div>
 
     <div class="container">
         <div class="header">
-            <h1 class="logo floating">A.N.I</h1>
-            <p class="tagline">تـــــــاروتـــــيــون</p>
+            <h1 class="logo">اللَّهُمَّ رَبَّنَا أَنزِلْ عَلَيْنَا مَائِدَةً مِّنَ السَّمَاءِ</h1>
+            <p class="tagline">احـمد نــــاجي ابراهيـــم - التحليل الشامل</p>
         </div>
 
-        <div class="tabs-vertical-container">
-            <!-- تبويب الكشف - أزرق -->
-            <div class="vertical-tab tarot-tab">
-                <div class="vertical-tab-header">
-                    <div class="vertical-tab-title">
-                        <span>كـــشف</span>
-                        <span class="price-range">25$ - 75$</span>
+        <!-- تنقل بسيط وعملي -->
+        <nav class="main-nav">
+            <button class="nav-btn active" data-target="input-data">
+                <i class="fas fa-database"></i>
+                <span>البيانات</span>
+            </button>
+            <button class="nav-btn" data-target="system4">
+                <i class="fas fa-gem"></i>
+                <span>القرعة</span>
+            </button>
+            <button class="nav-btn" data-target="zodiac">
+                <i class="fas fa-star"></i>
+                <span>الإبراج</span>
+            </button>
+            <button class="nav-btn" data-target="dominance">
+                <i class="fas fa-trophy"></i>
+                <span>الحلبة</span>
+            </button>
+            <button class="nav-btn" data-target="compatibility">
+                <i class="fas fa-tree"></i>
+                <span>التوافق</span>
+            </button>
+            <button class="nav-btn" data-target="energy">
+                <i class="fas fa-bolt"></i>
+                <span>الطاقة</span>
+            </button>
+        </nav>
+
+        <!-- المحتوى الرئيسي -->
+        <div class="main-content">
+            <!-- قسم بيانات الإدخال -->
+            <div class="content-section active" id="input-data">
+                <div class="input-cards">
+                    <div class="input-card">
+                        <div class="card-header">
+                            <i class="fas fa-user-graduate"></i>
+                            <h3>بطاقة الطالب</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="studentName" class="input-label required">
+                                    <i class="fas fa-signature"></i>
+                                    اسم الطالب
+                                </label>
+                                <input type="text" id="studentName" class="input-field" placeholder="أدخل اسم الطالب الكامل">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="studentBirth" class="input-label">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    مواليد الطالب
+                                </label>
+                                <input type="date" id="studentBirth" class="input-field">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="motherName" class="input-label">
+                                    <i class="fas fa-female"></i>
+                                    اسم الأم
+                                </label>
+                                <input type="text" id="motherName" class="input-field" placeholder="أدخل اسم الأم الكامل">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fatherName" class="input-label">
+                                    <i class="fas fa-male"></i>
+                                    اسم الأب
+                                </label>
+                                <input type="text" id="fatherName" class="input-field" placeholder="أدخل اسم الأب الكامل">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-card">
+                        <div class="card-header">
+                            <i class="fas fa-user-tie"></i>
+                            <h3>بطاقة المطلوب</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="targetName" class="input-label">
+                                    <i class="fas fa-signature"></i>
+                                    اسم المطلوب
+                                </label>
+                                <input type="text" id="targetName" class="input-field" placeholder="أدخل اسم المطلوب الكامل">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="targetBirth" class="input-label">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    مواليد المطلوب
+                                </label>
+                                <input type="date" id="targetBirth" class="input-field">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="targetMotherName" class="input-label">
+                                    <i class="fas fa-female"></i>
+                                    اسم أم المطلوب
+                                </label>
+                                <input type="text" id="targetMotherName" class="input-field" placeholder="أدخل اسم أم المطلوب">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="targetFatherName" class="input-label">
+                                    <i class="fas fa-male"></i>
+                                    اسم أب المطلوب
+                                </label>
+                                <input type="text" id="targetFatherName" class="input-field" placeholder="أدخل اسم أب المطلوب">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="vertical-tab-content">
-                    <div class="service-fields">
-                        <div class="service-field">
-                            <div class="field-content">
-                                <h3 class="field-title">كـــشف مـبدئـي</h3>
-                            </div>
-                            <div class="field-details">
-                                <div class="field-duration">
-                                    <i class="far fa-clock"></i> 15 دقيقة
-                                </div>
-                                <div class="field-price">25 $</div>
-                            </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="calculateBtn">
+                        <i class="fas fa-calculator"></i>
+                        بدء التحليل
+                    </button>
+                    <button class="btn btn-outline" id="clearBtn">
+                        <i class="fas fa-eraser"></i>
+                        مسح الكل
+                    </button>
+                    <button class="btn btn-outline" id="sampleBtn">
+                        <i class="fas fa-vial"></i>
+                        بيانات تجريبية
+                    </button>
+                </div>
+            </div>
+
+            <!-- باقي الأقسام بنفس الهيكل -->
+            <div class="content-section" id="system4">
+                <div class="section-header">
+                    <h2><i class="fas fa-gem"></i> نظام القرعة</h2>
+                    <p>تحليل الأحجار والنتائج القرآنية</p>
+                </div>
+                <div class="results-content" id="system4Content"></div>
+            </div>
+
+            <div class="content-section" id="zodiac">
+                <div class="section-header">
+                    <h2><i class="fas fa-star"></i> تحليل الإبراج</h2>
+                    <p>التحليل الفلكي والتنبؤات</p>
+                </div>
+                <div class="results-content" id="zodiacContent"></div>
+            </div>
+
+            <div class="content-section" id="dominance">
+                <div class="section-header">
+                    <h2><i class="fas fa-trophy"></i> تحليل الحلبة</h2>
+                    <p>تحليل الهيمنة والتفوق</p>
+                </div>
+                <div class="results-content" id="dominanceContent"></div>
+            </div>
+
+            <div class="content-section" id="compatibility">
+                <div class="section-header">
+                    <h2><i class="fas fa-tree"></i> شجرة التوافق</h2>
+                    <p>تحليل التوافق والتناغم</p>
+                </div>
+                <div class="results-content" id="compatibilityContent">
+                    <div class="compatibility-grid">
+                        <div class="compatibility-column">
+                            <h3><i class="fas fa-text-height"></i> الجمل الكبير</h3>
+                            <div id="largeCompatibilityResults"></div>
                         </div>
-                        
-                        <div class="service-field featured">
-                            <div class="field-content">
-                                <h3 class="field-title">كـــشف مفــصل</h3>
-                            </div>
-                            <div class="field-details">
-                                <div class="field-duration">
-                                    <i class="far fa-clock"></i> 30 دقيقة
-                                </div>
-                                <div class="field-price">50 $</div>
-                            </div>
-                        </div>
-                        
-                        <div class="service-field">
-                            <div class="field-content">
-                                <h3 class="field-title">كـــشف كـامـل</h3>
-                            </div>
-                            <div class="field-details">
-                                <div class="field-duration">
-                                    <i class="far fa-clock"></i> 45 دقيقة
-                                </div>
-                                <div class="field-price">75 $</div>
-                            </div>
+                        <div class="compatibility-column">
+                            <h3><i class="fas fa-text-width"></i> الجمل الصغير</h3>
+                            <div id="smallCompatibilityResults"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- تبويب القراءة - أخضر -->
-            <div class="vertical-tab horoscope-tab">
-                <div class="vertical-tab-header">
-                    <div class="vertical-tab-title">
-                        <span>قـــراءة</span>
-                        <span class="price-range">50$ - 300$</span>
-                    </div>
+
+            <div class="content-section" id="energy">
+                <div class="section-header">
+                    <h2><i class="fas fa-bolt"></i> شجرة الطاقة</h2>
+                    <p>تحليل الطاقة والتوقيتات</p>
                 </div>
-                <div class="vertical-tab-content">
-                    <div class="service-fields">
-                        <div class="service-field">
-                            <div class="field-content">
-                                <h3 class="field-title">تــــاروت</h3>
-                            </div>
-                            <div class="field-details">
-                                <div class="field-duration">
-                                    <i class="far fa-clock"></i> 30 دقيقة
-                                </div>
-                                <div class="field-price">50 $</div>
-                            </div>
-                        </div>
-                        
-                        <div class="service-field featured">
-                            <div class="field-content">
-                                <h3 class="field-title">فــــنجان</h3>
-                            </div>
-                            <div class="field-details">
-                                <div class="field-duration">
-                                    <i class="far fa-clock"></i> 45 دقيقة
-                                </div>
-                                <div class="field-price">90 $</div>
-                            </div>
-                        </div>
-                        
-                        <div class="service-field">
-                            <div class="field-content">
-                                <h3 class="field-title">الـــرمل</h3>
-                            </div>
-                            <div class="field-details">
-                                <div class="field-duration">
-                                    <i class="far fa-clock"></i> 90 دقيقة
-                                </div>
-                                <div class="field-price">300 $</div>
-                            </div>
-                        </div>
+                <div class="results-content" id="energyContent">
+                    <div class="energy-tabs">
+                        <button class="energy-tab active" data-type="days">تحليل الأيام</button>
+                        <button class="energy-tab" data-type="months">تحليل الأشهر</button>
                     </div>
-                </div>
-            </div>
-            
-            <!-- تبويب الرصد - بنفسجي -->
-            <div class="vertical-tab coffee-tab">
-                <div class="vertical-tab-header">
-                    <div class="vertical-tab-title">
-                        <span>- VIP -</span>
-                        <span class="price-range">200$ - 800$</span>
-                    </div>
-                </div>
-                <div class="vertical-tab-content">
-                    <div class="service-fields">
-                        <div class="service-field">
-                            <div class="field-content">
-                                <h3 class="field-title">خريطة الطاقة</h3>
-                            </div>
-                            <div class="field-details">
-                                <div class="field-duration">
-                                    <i class="far fa-clock"></i> 60 دقيقة
-                                </div>
-                                <div class="field-price">200 $</div>
-                            </div>
+                    
+                    <div class="energy-results">
+                        <div class="energy-section">
+                            <h3><i class="fas fa-female"></i> الطالب مع الأم</h3>
+                            <div class="energy-grid" id="motherEnergyResults"></div>
                         </div>
                         
-                        <div class="service-field">
-                            <div class="field-content">
-                                <h3 class="field-title">إسقاط نجمي</h3>
-                            </div>
-                            <div class="field-details">
-                                <div class="field-duration">
-                                    <i class="far fa-clock"></i> توقيت خاص
-                                </div>
-                                <div class="field-price">500 $</div>
-                            </div>
+                        <div class="energy-section">
+                            <h3><i class="fas fa-male"></i> الطالب مع الأب</h3>
+                            <div class="energy-grid" id="fatherEnergyResults"></div>
                         </div>
                         
-                        <div class="service-field featured">
-                            <div class="field-content">
-                                <h3 class="field-title">الـرصـــد</h3>
-                            </div>
-                            <div class="field-details">
-                                <div class="field-duration">
-                                    <i class="far fa-clock"></i> 3 ايام
-                                </div>
-                                <div class="field-price">800 $</div>
-                            </div>
+                        <div class="energy-section">
+                            <h3><i class="fas fa-users"></i> الطالب مع الوالدين</h3>
+                            <div class="energy-grid" id="parentsEnergyResults"></div>
                         </div>
                     </div>
                 </div>
@@ -710,59 +223,11 @@
         </div>
         
         <div class="footer">
-            <p class="footer-text">تاروتيون © 2026 - جميع الحقوق محفوظة</p>
+            <p class="footer-text">نظام أحمد ناجي © 2026 - 2027</p>
         </div>
     </div>
 
-    <script>
-        // إنشاء النجوم العشوائية
-        function createStars() {
-            const starsContainer = document.getElementById('stars');
-            const starsCount = 150;
-            
-            for (let i = 0; i < starsCount; i++) {
-                const star = document.createElement('div');
-                star.classList.add('star');
-                
-                const size = Math.random() * 2;
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
-                const delay = Math.random() * 5;
-                
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                star.style.right = `${posX}%`;
-                star.style.top = `${posY}%`;
-                star.style.animationDelay = `${delay}s`;
-                
-                starsContainer.appendChild(star);
-            }
-        }
-
-        // تفعيل التبويبات العمودية
-        document.querySelectorAll('.vertical-tab-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const tab = header.parentElement;
-                const content = tab.querySelector('.vertical-tab-content');
-                
-                // إغلاق جميع التبويبات الأخرى
-                document.querySelectorAll('.vertical-tab').forEach(otherTab => {
-                    if (otherTab !== tab) {
-                        otherTab.querySelector('.vertical-tab-header').classList.remove('active');
-                        otherTab.querySelector('.vertical-tab-content').classList.remove('active');
-                    }
-                });
-                
-                // تبديل حالة التبويب الحالي
-                header.classList.toggle('active');
-                content.classList.toggle('active');
-            });
-        });
-
-        // تهيئة النجوم عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            createStars();
-        });
-    </script>
+    <script src="systems.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
